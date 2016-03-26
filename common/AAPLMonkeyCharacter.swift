@@ -102,7 +102,7 @@ class AAPLMonkeyCharacter: AAPLSkinnedCharacter {
                     node.physicsBody = SCNPhysicsBody(type: .Dynamic, shape: coconutPhysicsShape)
                     node.physicsBody!.restitution = 0.9
                     node.physicsBody!.collisionBitMask = GameCollisionCategoryPlayer | GameCollisionCategoryGround
-                    if #available(iOS 9.0, *) {
+                    if #available(iOS 9.0, OSX 10.11, *) {
                         node.physicsBody!.contactTestBitMask = node.physicsBody!.collisionBitMask
                     }
                     node.physicsBody!.categoryBitMask = GameCollisionCategoryCoconut

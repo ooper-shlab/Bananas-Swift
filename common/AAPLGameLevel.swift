@@ -82,7 +82,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             
             // Only collide with player and ground
             node.physicsBody!.collisionBitMask = GameCollisionCategoryPlayer | GameCollisionCategoryGround
-            if #available(iOS 9.0, *) {
+            if #available(iOS 9.0, OSX 10.11, *) {
                 node.physicsBody!.contactTestBitMask = node.physicsBody!.collisionBitMask
             }
             
@@ -123,7 +123,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             
             // Only collide with player and ground
             self.bananaCollectable!.physicsBody!.collisionBitMask = GameCollisionCategoryPlayer | GameCollisionCategoryGround
-            if #available(iOS 9.0, *) {
+            if #available(iOS 9.0, OSX 10.11, *) {
                 self.bananaCollectable!.physicsBody!.contactTestBitMask = self.bananaCollectable!.physicsBody!.collisionBitMask
             }
             // Declare self in the banana category
@@ -847,7 +847,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         // ignore collisions
         banana.physicsBody = nil
-        bananasCollected++
+        bananasCollected += 1
         
         let variance = 60
         let randomY = SCNVectorFloat((Int(rand()) % variance) - (variance / 2))
@@ -876,7 +876,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             self.bananas.remove(banana)
             banana.removeFromParentNode()
             // Add to score.
-            self.score++
+            self.score += 1
             AAPLGameSimulation.sim.playSound("deposit.caf")
             if self.bananas.isEmpty {
                 // Game Over
@@ -891,7 +891,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         // ignore collisions
         largeBanana.physicsBody = nil
-        coinsCollected++
+        coinsCollected += 1
         
         self.largeBananas.remove(largeBanana)
         largeBanana.removeAllParticleSystems()
@@ -942,7 +942,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
                 banana.position = largeBanana.position
                 banana.physicsBody?.categoryBitMask = GameCollisionCategoryNoCollide
                 banana.physicsBody?.collisionBitMask = GameCollisionCategoryGround
-                if #available(iOS 9.0, *) {
+                if #available(iOS 9.0, OSX 10.11, *) {
                     banana.physicsBody!.contactTestBitMask = banana.physicsBody!.collisionBitMask
                 }
                 
@@ -956,7 +956,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
                 banana.runAction(flyoff) {
                     banana.physicsBody?.categoryBitMask = GameCollisionCategoryBanana
                     banana.physicsBody?.collisionBitMask = GameCollisionCategoryGround | GameCollisionCategoryPlayer
-                    if #available(iOS 9.0, *) {
+                    if #available(iOS 9.0, OSX 10.11, *) {
                         banana.physicsBody!.contactTestBitMask = banana.physicsBody!.collisionBitMask
                     }
                     AAPLGameSimulation.sim.playSound("deposit.caf")
@@ -970,7 +970,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         // No more collisions. Let it bounce away and fade out.
         coconut.physicsBody?.collisionBitMask = 0
-        if #available(iOS 9.0, *) {
+        if #available(iOS 9.0, OSX 10.11, *) {
             coconut.physicsBody!.contactTestBitMask = coconut.physicsBody!.collisionBitMask
         }
         coconut.runAction(SCNAction.sequence([
@@ -1002,7 +1002,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             banana.position = contactPoint
             banana.physicsBody?.categoryBitMask = GameCollisionCategoryNoCollide
             banana.physicsBody?.collisionBitMask = GameCollisionCategoryGround
-            if #available(iOS 9.0, *) {
+            if #available(iOS 9.0, OSX 10.11, *) {
                 banana.physicsBody!.contactTestBitMask = banana.physicsBody!.collisionBitMask
             }
             var endPoint = SCNVector3Make(0, 0, 0)
@@ -1014,7 +1014,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             banana.runAction(flyoff) {
                 banana.physicsBody?.categoryBitMask = GameCollisionCategoryBanana
                 banana.physicsBody?.collisionBitMask = GameCollisionCategoryGround | GameCollisionCategoryPlayer
-                if #available(iOS 9.0, *) {
+                if #available(iOS 9.0, OSX 10.11, *) {
                     banana.physicsBody!.contactTestBitMask = banana.physicsBody!.collisionBitMask
                 }
             }

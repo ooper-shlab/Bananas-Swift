@@ -45,8 +45,9 @@ class AAPLVirtualDPadGestureRecognizer : UIGestureRecognizer {
         self.virtualDPadRunThreshold = 40
     }
     
-    private func touch(touch: UITouch, var isInRect rect: CGRect) -> Bool {
+    private func touch(touch: UITouch, isInRect _rect: CGRect) -> Bool {
         let bounds = self.view!.bounds
+        var rect = _rect
         rect = CGRectApplyAffineTransform(rect, CGAffineTransformMakeScale(bounds.size.width, bounds.size.height))
         return CGRectContainsPoint(rect, touch.locationInView(self.view))
     }

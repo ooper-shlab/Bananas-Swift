@@ -1,5 +1,5 @@
 //
-//  UInt8+UnicodeScalarLiteralConvertible.swift
+//  UInt16+UnicodeScalarLiteralConvertible.swift
 //  OOPUtils
 //
 //  Created by OOPer in cooperation with shlab.jp, on 2015/11/28.

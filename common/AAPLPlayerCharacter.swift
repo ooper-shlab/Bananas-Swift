@@ -133,7 +133,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
             GameCollisionCategoryCoin |
             GameCollisionCategoryCoconut |
         GameCollisionCategoryLava
-        if #available(iOS 9.0, *) {
+        if #available(iOS 9.0, OSX 10.11, *) {
             collideSphere.physicsBody!.contactTestBitMask = collideSphere.physicsBody!.collisionBitMask
         }
         

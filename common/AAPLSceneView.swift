@@ -55,7 +55,7 @@ class AAPLSceneView: SCNView {
         self.setupGestureRecognizer()
     }
     private func setupGestureRecognizer() {
-        let gesture = AAPLVirtualDPadGestureRecognizer(target: self, action: "handleVirtualDPadAction:")
+        let gesture = AAPLVirtualDPadGestureRecognizer(target: self, action: #selector(AAPLSceneView.handleVirtualDPadAction(_:)))
         gesture.delegate = self
         self.addGestureRecognizer(gesture)
     }

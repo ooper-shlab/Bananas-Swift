@@ -36,12 +36,12 @@ class AAPLAppDelegate: NSObject {
     private func listenForGameControllerWithSim(gameSim: AAPLGameSimulation) {
 	//-- GameController hook up
         NSNotificationCenter.defaultCenter().addObserver(gameSim,
-            selector: "controllerDidConnect:",
+            selector: #selector(AAPLGameSimulation.controllerDidConnect),
             name: GCControllerDidConnectNotification,
             object: nil)
 
         NSNotificationCenter.defaultCenter().addObserver(gameSim,
-            selector: "controllerDidDisconnect:",
+            selector: #selector(AAPLGameSimulation.controllerDidDisconnect),
             name: GCControllerDidDisconnectNotification,
             object: nil)
 
