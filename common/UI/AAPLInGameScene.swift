@@ -23,7 +23,7 @@ class AAPLInGameScene: SKScene {
     
     var scoreLabelValue: SKLabelNode
     var scoreLabelValueShadow: SKLabelNode!
-    var gameState: AAPLGameState = .PreGame {
+    var gameState: AAPLGameState = .preGame {
         willSet {
             willSetGameState(newValue)
         }
@@ -51,18 +51,18 @@ class AAPLInGameScene: SKScene {
         
         self.addChild(self.timeLabel)
         var af = self.timeLabel.calculateAccumulatedFrame()
-        self.timeLabel.position = CGPointMake(self.frame.size.width - af.size.width, self.frame.size.height - (af.size.height))
+        self.timeLabel.position = CGPoint(x: self.frame.size.width - af.size.width, y: self.frame.size.height - (af.size.height))
         
         self.addChild(timeLabelValue)
         let timeLabelValueSize = timeLabelValue.calculateAccumulatedFrame()
-        timeLabelValue.position = CGPointMake(self.frame.size.width - af.size.width - timeLabelValueSize.size.width - 10, self.frame.size.height - (af.size.height))
+        timeLabelValue.position = CGPoint(x: self.frame.size.width - af.size.width - timeLabelValueSize.size.width - 10, y: self.frame.size.height - (af.size.height))
         
         self.addChild(self.scoreLabel)
         af = self.scoreLabel.calculateAccumulatedFrame()
-        self.scoreLabel.position = CGPointMake(af.size.width * 0.5, self.frame.size.height - (af.size.height))
+        self.scoreLabel.position = CGPoint(x: af.size.width * 0.5, y: self.frame.size.height - (af.size.height))
         
         self.addChild(scoreLabelValue)
-        scoreLabelValue.position = CGPointMake(af.size.width * 0.75 + (timeLabelValueSize.size.width), self.frame.size.height - (af.size.height))
+        scoreLabelValue.position = CGPoint(x: af.size.width * 0.75 + (timeLabelValueSize.size.width), y: self.frame.size.height - (af.size.height))
         
         // Add drop shadows to each label above.
         self.timeLabelValueShadow = AAPLInGameScene.dropShadowOnLabel(timeLabelValue)
@@ -76,22 +76,22 @@ class AAPLInGameScene: SKScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func willSetGameState(newState: AAPLGameState) {
+    private func willSetGameState(_ newState: AAPLGameState) {
         
         self.menuNode?.removeFromParent()
         self.pauseNode?.removeFromParent()
         self.postGameNode?.removeFromParent()
         
         switch newState {
-        case .PreGame:
+        case .preGame:
             self.menuNode = AAPLMainMenu(size: self.frame.size)
             self.addChild(self.menuNode!)
-        case .InGame:
+        case .inGame:
             self.hideInGameUI(false)
-        case .Paused:
+        case .paused:
             self.pauseNode = AAPLPauseMenu(size: self.frame.size)
             self.addChild(self.pauseNode!)
-        case .PostGame:
+        case .postGame:
             self.postGameNode = AAPLPostGameMenu(size: self.frame.size, andDelegate: self.gameStateDelegate)
             self.addChild(self.postGameNode!)
             self.hideInGameUI(true)
@@ -99,40 +99,40 @@ class AAPLInGameScene: SKScene {
         
     }
     
-    private func hideInGameUI(hide: Bool) {
-        self.scoreLabelValue.hidden = hide
-        self.scoreLabelValueShadow.hidden = hide
-        self.timeLabelValue.hidden = hide
-        self.timeLabelValueShadow.hidden = hide
-        self.scoreLabel.hidden = hide
-        self.scoreLabelShadow.hidden = hide
-        self.timeLabel.hidden = hide
-        self.timeLabelShadow.hidden = hide
+    private func hideInGameUI(_ hide: Bool) {
+        self.scoreLabelValue.isHidden = hide
+        self.scoreLabelValueShadow.isHidden = hide
+        self.timeLabelValue.isHidden = hide
+        self.timeLabelValueShadow.isHidden = hide
+        self.scoreLabel.isHidden = hide
+        self.scoreLabelShadow.isHidden = hide
+        self.timeLabel.isHidden = hide
+        self.timeLabelShadow.isHidden = hide
     }
     
-    class func labelWithText(text: String, andSize textSize: CGFloat) -> SKLabelNode {
+    class func labelWithText(_ text: String, andSize textSize: CGFloat) -> SKLabelNode {
         let fontName = "Optima-ExtraBlack"
         let myLabel = SKLabelNode(fontNamed: fontName)
         
         myLabel.text = text
         myLabel.fontSize = textSize
-        myLabel.fontColor = SKColor.yellowColor()
+        myLabel.fontColor = SKColor.yellow
         
         return myLabel
     }
     
-    class func dropShadowOnLabel(frontLabel: SKLabelNode) -> SKLabelNode {
+    @discardableResult class func dropShadowOnLabel(_ frontLabel: SKLabelNode) -> SKLabelNode {
         let myLabelBackground = frontLabel.copy() as! SKLabelNode
-        myLabelBackground.userInteractionEnabled = false
-        myLabelBackground.fontColor = SKColor.blackColor()
-        myLabelBackground.position = CGPointMake(2 + frontLabel.position.x, -2 + frontLabel.position.y)
+        myLabelBackground.isUserInteractionEnabled = false
+        myLabelBackground.fontColor = SKColor.black
+        myLabelBackground.position = CGPoint(x: 2 + frontLabel.position.x, y: -2 + frontLabel.position.y)
         
         myLabelBackground.zPosition = frontLabel.zPosition - 1
         frontLabel.parent?.addChild(myLabelBackground)
         return myLabelBackground
     }
     
-    override func update(currentTime: NSTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         // Update the score and time labels with the correct data.
         self.gameStateDelegate?.scoreLabelLocation = self.scoreLabelValue.position
         
@@ -145,19 +145,19 @@ class AAPLInGameScene: SKScene {
         self.timeLabelValueShadow.text = timeLabelValue.text
     }
     
-    func touchUpAtPoint(location: CGPoint) {
+    func touchUpAtPoint(_ location: CGPoint) {
         switch gameState {
-        case .Paused:
+        case .paused:
             self.pauseNode?.touchUpAtPoint(location)
-        case .PostGame:
+        case .postGame:
             self.postGameNode?.touchUpAtPoint(location)
-        case .PreGame:
+        case .preGame:
             self.menuNode?.touchUpAtPoint(location)
-        case .InGame:
-            let touchedNode = self.scene?.nodeAtPoint(location)
+        case .inGame:
+            let touchedNode = self.scene?.atPoint(location)
             
             if touchedNode === self.timeLabelValue {
-                AAPLGameSimulation.sim.gameState = .Paused
+                AAPLGameSimulation.sim.gameState = .paused
             }
         }
     }

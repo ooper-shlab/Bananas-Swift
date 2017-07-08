@@ -39,12 +39,12 @@
 		9F1BF92D18B635B300233071 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1BF92C18B635B300233071 /* CFNetwork.framework */; };
 		9F1BF92F18B657B000233071 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F2FD941188B102B00E24A53 /* art.scnassets */; };
 		9F64585618BCE579005DE93A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F64585418BCE52B005DE93A /* CoreGraphics.framework */; };
+		D74622881F116A54006C25FB /* AAPLPauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74622861F116A54006C25FB /* AAPLPauseMenu.swift */; };
+		D74622891F116A54006C25FB /* AAPLPostGameMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74622871F116A54006C25FB /* AAPLPostGameMenu.swift */; };
+		D746228A1F116DF5006C25FB /* AAPLPostGameMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74622871F116A54006C25FB /* AAPLPostGameMenu.swift */; };
+		D746228B1F116DF9006C25FB /* AAPLPauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74622861F116A54006C25FB /* AAPLPauseMenu.swift */; };
 		D769069C1C0323E9002196E0 /* AAPLMainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D769069B1C0323E9002196E0 /* AAPLMainMenu.swift */; };
 		D769069D1C0323E9002196E0 /* AAPLMainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D769069B1C0323E9002196E0 /* AAPLMainMenu.swift */; };
-		D769069F1C032437002196E0 /* AAPLPauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D769069E1C032437002196E0 /* AAPLPauseMenu.swift */; };
-		D76906A01C032437002196E0 /* AAPLPauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D769069E1C032437002196E0 /* AAPLPauseMenu.swift */; };
-		D76906A21C0324A0002196E0 /* AAPLPostGameMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76906A11C0324A0002196E0 /* AAPLPostGameMenu.swift */; };
-		D76906A31C0324A0002196E0 /* AAPLPostGameMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76906A11C0324A0002196E0 /* AAPLPostGameMenu.swift */; };
 		D76906DD1C04D221002196E0 /* AAPLInGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D4B4501C00D49C0045FC53 /* AAPLInGameScene.swift */; };
 		D7CCF21D1C0AD2680035A527 /* AAPLAppDelegateOSX.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CE81C09C0D9006B6084 /* AAPLAppDelegateOSX.swift */; };
 		D7CCF2201C0B0FE50035A527 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7CCF21E1C0B0FE50035A527 /* LaunchScreen.storyboard */; };
@@ -67,9 +67,7 @@
 		D7D4B4871C01A0A80045FC53 /* AAPLVirtualDPadGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D4B3EC1BFFEAAE0045FC53 /* AAPLVirtualDPadGestureRecognizer.swift */; };
 		D7ED2CAC1C07349A006B6084 /* AAPLMonkeyCharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CAB1C07349A006B6084 /* AAPLMonkeyCharacter.swift */; };
 		D7ED2CAD1C07349A006B6084 /* AAPLMonkeyCharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CAB1C07349A006B6084 /* AAPLMonkeyCharacter.swift */; };
-		D7ED2CDB1C091B58006B6084 /* GenericArithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CD91C091B58006B6084 /* GenericArithmetic.swift */; };
 		D7ED2CDC1C091B58006B6084 /* UInt16+UnicodeScalarLiteralConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CDA1C091B58006B6084 /* UInt16+UnicodeScalarLiteralConvertible.swift */; };
-		D7ED2CDD1C091B6B006B6084 /* GenericArithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CD91C091B58006B6084 /* GenericArithmetic.swift */; };
 		D7ED2CDE1C091B74006B6084 /* UInt16+UnicodeScalarLiteralConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CDA1C091B58006B6084 /* UInt16+UnicodeScalarLiteralConvertible.swift */; };
 		D7ED2CE31C099AAF006B6084 /* AAPLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CE21C099AAF006B6084 /* AAPLViewController.swift */; };
 		D7ED2CE51C099ADA006B6084 /* AAPLAppDelegateIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED2CE41C099ADA006B6084 /* AAPLAppDelegateIOS.swift */; };
@@ -117,9 +115,9 @@
 		9F1BF92618B6351A00233071 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.Internal.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		9F1BF92C18B635B300233071 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.Internal.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		9F64585418BCE52B005DE93A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.Internal.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		D74622861F116A54006C25FB /* AAPLPauseMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AAPLPauseMenu.swift; path = UI/AAPLPauseMenu.swift; sourceTree = "<group>"; };
+		D74622871F116A54006C25FB /* AAPLPostGameMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AAPLPostGameMenu.swift; path = UI/AAPLPostGameMenu.swift; sourceTree = "<group>"; };
 		D769069B1C0323E9002196E0 /* AAPLMainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPLMainMenu.swift; sourceTree = "<group>"; };
-		D769069E1C032437002196E0 /* AAPLPauseMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPLPauseMenu.swift; sourceTree = "<group>"; };
-		D76906A11C0324A0002196E0 /* AAPLPostGameMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAPLPostGameMenu.swift; sourceTree = "<group>"; };
 		D7CCF21F1C0B0FE50035A527 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D7CCF2211C0B3C9C0035A527 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		D7CCF2231C0B3D480035A527 /* README2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README2.md; sourceTree = "<group>"; };
@@ -281,10 +279,10 @@
 		1F34376A1880AEC1008C27B6 /* SpriteKit Overlay UI */ = {
 			isa = PBXGroup;
 			children = (
+				D74622861F116A54006C25FB /* AAPLPauseMenu.swift */,
+				D74622871F116A54006C25FB /* AAPLPostGameMenu.swift */,
 				D7D4B4501C00D49C0045FC53 /* AAPLInGameScene.swift */,
 				D769069B1C0323E9002196E0 /* AAPLMainMenu.swift */,
-				D769069E1C032437002196E0 /* AAPLPauseMenu.swift */,
-				D76906A11C0324A0002196E0 /* AAPLPostGameMenu.swift */,
 			);
 			name = "SpriteKit Overlay UI";
 			path = common;
@@ -395,7 +393,7 @@
 			attributes = {
 				CLASSPREFIX = AAPL;
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Apple Inc.";
 				TargetAttributes = {
 					1F34372B1880ABDE008C27B6 = {
@@ -408,6 +406,9 @@
 								enabled = 0;
 							};
 						};
+					};
+					9F1BF8E518B6335B00233071 = {
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -465,18 +466,17 @@
 				D7D4B3F51C002B770045FC53 /* AAPLCoconut.swift in Sources */,
 				D7ED2CDC1C091B58006B6084 /* UInt16+UnicodeScalarLiteralConvertible.swift in Sources */,
 				D7D4B3EF1C002A160045FC53 /* AAPLGameLevel.swift in Sources */,
-				D76906A21C0324A0002196E0 /* AAPLPostGameMenu.swift in Sources */,
-				D769069F1C032437002196E0 /* AAPLPauseMenu.swift in Sources */,
 				D7D4B4541C00D6BE0045FC53 /* AAPLAppDelegate.swift in Sources */,
 				D7D4B3FE1C00365A0045FC53 /* AAPLPlayerCharacter.swift in Sources */,
 				D769069C1C0323E9002196E0 /* AAPLMainMenu.swift in Sources */,
 				D7CCF21D1C0AD2680035A527 /* AAPLAppDelegateOSX.swift in Sources */,
 				D7D4B4831C017EAB0045FC53 /* AAPLMathUtils.swift in Sources */,
 				D7ED2CAC1C07349A006B6084 /* AAPLMonkeyCharacter.swift in Sources */,
-				D7ED2CDB1C091B58006B6084 /* GenericArithmetic.swift in Sources */,
+				D74622881F116A54006C25FB /* AAPLPauseMenu.swift in Sources */,
 				D7D4B4571C00DA6B0045FC53 /* AAPLSceneView.swift in Sources */,
 				D7D4B3FB1C0035BA0045FC53 /* AAPLSkinnedCharacter.swift in Sources */,
 				D7D4B3F21C002AC30045FC53 /* AAPLGameSimulation.swift in Sources */,
+				D74622891F116A54006C25FB /* AAPLPostGameMenu.swift in Sources */,
 				D7D4B4511C00D49C0045FC53 /* AAPLInGameScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -486,10 +486,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7ED2CDE1C091B74006B6084 /* UInt16+UnicodeScalarLiteralConvertible.swift in Sources */,
+				D746228B1F116DF9006C25FB /* AAPLPauseMenu.swift in Sources */,
 				D7D4B3F61C002B770045FC53 /* AAPLCoconut.swift in Sources */,
 				D7D4B3F01C002A160045FC53 /* AAPLGameLevel.swift in Sources */,
 				D7D4B3FF1C00365A0045FC53 /* AAPLPlayerCharacter.swift in Sources */,
-				D7ED2CDD1C091B6B006B6084 /* GenericArithmetic.swift in Sources */,
+				D746228A1F116DF5006C25FB /* AAPLPostGameMenu.swift in Sources */,
 				D76906DD1C04D221002196E0 /* AAPLInGameScene.swift in Sources */,
 				D7ED2CE31C099AAF006B6084 /* AAPLViewController.swift in Sources */,
 				D7D4B4551C00D6BE0045FC53 /* AAPLAppDelegate.swift in Sources */,
@@ -499,10 +500,8 @@
 				D7D4B4871C01A0A80045FC53 /* AAPLVirtualDPadGestureRecognizer.swift in Sources */,
 				D7ED2CAD1C07349A006B6084 /* AAPLMonkeyCharacter.swift in Sources */,
 				D7ED2CE71C099DBC006B6084 /* AAPLSceneView.swift in Sources */,
-				D76906A31C0324A0002196E0 /* AAPLPostGameMenu.swift in Sources */,
 				D7D4B3F31C002AC30045FC53 /* AAPLGameSimulation.swift in Sources */,
 				D7D4B4841C017EAB0045FC53 /* AAPLMathUtils.swift in Sources */,
-				D76906A01C032437002196E0 /* AAPLPauseMenu.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,14 +555,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -595,14 +599,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -612,6 +621,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};
@@ -633,6 +643,7 @@
 				PROVISIONING_PROFILE = "";
 				SDKROOT = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = "armv6 armv7 x86_64 x86_64h";
 				WRAPPER_EXTENSION = app;
 			};
@@ -655,6 +666,7 @@
 				PRODUCT_NAME = Bananas;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = "";
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = "armv6 armv7 x86_64 x86_64h";
 				WRAPPER_EXTENSION = app;
 			};
@@ -667,6 +679,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -680,6 +693,7 @@
 				PRODUCT_NAME = "$(PROJECT_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -691,6 +705,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = "Bananas iOS/Bananas iOS-Info.plist";
@@ -699,6 +714,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(PROJECT_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

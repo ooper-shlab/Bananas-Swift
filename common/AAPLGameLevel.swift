@@ -36,7 +36,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     private(set) var score: Int = 0
     private(set) var coinsCollected: Int = 0
     private(set) var bananasCollected: Int = 0
-    private(set) var secondsRemaining: NSTimeInterval = 0.0
+    private(set) var secondsRemaining: TimeInterval = 0.0
     var scoreLabelLocation: CGPoint = CGPoint()
     
     //typedef enum {
@@ -78,7 +78,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             
             let sphereGeometry = SCNSphere(radius: 100)
             let physicsShape = SCNPhysicsShape(geometry: sphereGeometry, options: nil)
-            node.physicsBody = SCNPhysicsBody(type: .Kinematic, shape: physicsShape)
+            node.physicsBody = SCNPhysicsBody(type: .kinematic, shape: physicsShape)
             
             // Only collide with player and ground
             node.physicsBody!.collisionBitMask = GameCollisionCategoryPlayer | GameCollisionCategoryGround
@@ -90,10 +90,10 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             node.physicsBody!.categoryBitMask = GameCollisionCategoryCoin
             
             // Rotate forever.
-            let rotateCoin = SCNAction.rotateByX(0, y: 8, z: 0, duration: 2.0)
-            let repeatAction = SCNAction.repeatActionForever(rotateCoin)
+            let rotateCoin = SCNAction.rotateBy(x: 0, y: 8, z: 0, duration: 2.0)
+            let repeatAction = SCNAction.repeatForever(rotateCoin)
             
-            node.rotation = SCNVector4Make(0, 1, 0, SCNVectorFloat(M_PI_2))
+            node.rotation = SCNVector4Make(0, 1, 0, .pi/2)
             node.runAction(repeatAction)
             
             self.largeBananaCollectable = node
@@ -119,7 +119,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             let sphereGeometry = SCNSphere(radius: 40)
             let physicsShape = SCNPhysicsShape(geometry: sphereGeometry, options: nil)
             
-            self.bananaCollectable!.physicsBody = SCNPhysicsBody(type: .Kinematic, shape: physicsShape)
+            self.bananaCollectable!.physicsBody = SCNPhysicsBody(type: .kinematic, shape: physicsShape)
             
             // Only collide with player and ground
             self.bananaCollectable!.physicsBody!.collisionBitMask = GameCollisionCategoryPlayer | GameCollisionCategoryGround
@@ -130,9 +130,9 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             self.bananaCollectable!.physicsBody!.categoryBitMask = GameCollisionCategoryBanana
             
             // Rotate and Hover forever.
-            self.bananaCollectable!.rotation = SCNVector4Make(0.5, 1, 0.5, -SCNVectorFloat(M_PI_4))
+            self.bananaCollectable!.rotation = SCNVector4Make(0.5, 1, 0.5, -SCNVectorFloat.pi/4)
             let idleHoverGroupAction = SCNAction.group([self.bananaIdleAction, self.hoverAction])
-            let repeatForeverAction = SCNAction.repeatActionForever(idleHoverGroupAction)
+            let repeatForeverAction = SCNAction.repeatForever(idleHoverGroupAction)
             self.bananaCollectable!.runAction(repeatForeverAction)
         }
         
@@ -143,12 +143,12 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         // Collect all the nodes that start with path_ under the dummy_front object.
         // Set those objects as Physics category ground and create a static concave mesh collider.
         // The simulation will use these as the ground to walk on.
-        let front = self.rootNode?.childNodeWithName("dummy_front", recursively: true)
-        front?.enumerateChildNodesUsingBlock{child, stop in
+        let front = self.rootNode?.childNode(withName: "dummy_front", recursively: true)
+        front?.enumerateChildNodes{child, stop in
             if child.name?.hasPrefix("path_") ?? false {
                 let path = child.childNodes.first; //the geometry is attached to the first child node of the node named path_*
                 
-                path?.physicsBody = SCNPhysicsBody(type: .Static, shape: SCNPhysicsShape(geometry: path!.geometry!, options: [SCNPhysicsShapeTypeKey: SCNPhysicsShapeTypeConcavePolyhedron]))
+                path?.physicsBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: path!.geometry!, options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron]))
                 path?.physicsBody!.categoryBitMask = GameCollisionCategoryGround
             }
         }
@@ -157,9 +157,9 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     private func collectSortedPathNodes() -> [SCNNode] {
         // Gather all the children under the dummy_master
         // Sort left to right, in the world.
-        let pathNodes = self.rootNode?.childNodeWithName("dummy_master", recursively: true)
+        let pathNodes = self.rootNode?.childNode(withName: "dummy_master", recursively: true)
         
-        let sortedNodes = pathNodes?.childNodes.sort {dummyA, dummyB in
+        let sortedNodes = pathNodes?.childNodes.sorted {dummyA, dummyB in
             
             return dummyA.position.x < dummyB.position.x
         }
@@ -238,7 +238,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     
     /*! Given a relative percent along the path, return back the world location vector.
     */
-    func locationAlongPath(percent: SCNVectorFloat) -> SCNVector3 {
+    func locationAlongPath(_ percent: SCNVectorFloat) -> SCNVector3 {
         if self.pathPositions.count <= 3 {
             return SCNVector3Make(0, 0, 0)
         }
@@ -257,7 +257,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         var location: SCNVector3 = SCNVector3()
         
-        func CatmullRomValue(a: Float, _ b: Float, _ c: Float, _ d: Float, _ dist: Float) -> SCNVectorFloat {
+        func CatmullRomValue(_ a: Float, _ b: Float, _ c: Float, _ d: Float, _ dist: Float) -> SCNVectorFloat {
             let tmp1 = (-a + 3.0 * b - 3.0 * c + d)
             let tmp2 = (2.0 * a - 5.0 * b + 4.0 * c - d)
             let tmp3 = ((-a + c) * dist)
@@ -279,7 +279,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     
     /*! Direction player facing given the current walking direction.
     */
-    private func getDirectionFromPosition(currentPosition: SCNVector3) -> SCNVector4 {
+    private func getDirectionFromPosition(_ currentPosition: SCNVector3) -> SCNVector4 {
         
         let target = SCNVector3ToGLKVector3(self.locationAlongPath(self.timeAlongPath - 0.05))
         
@@ -288,8 +288,8 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         let q = GLKQuaternionMakeWithMatrix4(lookat)
         
         var angle = SCNVectorFloat(GLKQuaternionAngle(q))
-        if self.playerCharacter?.walkDirection == .Left {
-            angle -= SCNVectorFloat(M_PI)
+        if self.playerCharacter?.walkDirection == .left {
+            angle -= .pi
         }
         return SCNVector4Make(0, 1, 0, angle)
     }
@@ -316,14 +316,14 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     // Add a concave collider to each lava mesh
     // UV animate the lava texture in the vertex shader.
     private func createLavaAnimation() {
-        let lavaNodes = self.rootNode?.childNodesPassingTest {child, stop in
+        let lavaNodes = self.rootNode?.childNodes {child, stop in
             child.name?.hasPrefix("lava_0") ?? false
             } ?? []
         
         for lava in lavaNodes {
-            let childrenWithGeometry = lava.childNodesPassingTest {child, stop in
+            let childrenWithGeometry = lava.childNodes {child, stop in
                 if child.geometry != nil {
-                    stop.memory = true
+                    stop.pointee = true
                     return true
                 }
                 
@@ -332,7 +332,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             
             if let lavaGeometry = childrenWithGeometry.first {
                 
-                lavaGeometry.physicsBody = SCNPhysicsBody(type: .Static, shape: SCNPhysicsShape(geometry: lavaGeometry.geometry!, options: [SCNPhysicsShapeTypeKey: SCNPhysicsShapeTypeConcavePolyhedron]))
+                lavaGeometry.physicsBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: lavaGeometry.geometry!, options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron]))
                 lavaGeometry.physicsBody!.categoryBitMask = GameCollisionCategoryLava
                 lavaGeometry.categoryBitMask = NodeCategoryLava
                 
@@ -340,7 +340,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
                 "uniform float speed;\n" +
                     "#pragma body\n" +
                 "_geometry.texcoords[0] += vec2(sin(_geometry.position.z*0.1 + u_time * 0.1) * 0.1, -1.0* 0.05 * u_time);\n"
-                lavaGeometry.geometry!.shaderModifiers = [SCNShaderModifierEntryPointGeometry : shaderCode]
+                lavaGeometry.geometry!.shaderModifiers = [SCNShaderModifierEntryPoint.geometry : shaderCode]
             }
         }
     }
@@ -348,34 +348,34 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     /*! Create an action that rotates back and forth.
     */
     private lazy var bananaIdleAction: SCNAction = {
-        let rotateAction = SCNAction.rotateByX(0, y: CGFloat(M_PI_2), z: 0, duration: 1.0)
-        rotateAction.timingMode = .EaseInEaseOut
-        let reversed = rotateAction.reversedAction()
+        let rotateAction = SCNAction.rotateBy(x: 0, y: .pi/2, z: 0, duration: 1.0)
+        rotateAction.timingMode = .easeInEaseOut
+        let reversed = rotateAction.reversed()
         return SCNAction.sequence([rotateAction, reversed])
     }()
     
     /*! Create an action that hovers up and down slightly.
     */
     private lazy var hoverAction: SCNAction = {
-        let floatAction = SCNAction.moveByX(0, y: 10.0, z: 0, duration: 1.0)
-        let floatAction2 = floatAction.reversedAction()
-        floatAction.timingMode = .EaseInEaseOut
-        floatAction2.timingMode = .EaseInEaseOut
+        let floatAction = SCNAction.moveBy(x: 0, y: 10.0, z: 0, duration: 1.0)
+        let floatAction2 = floatAction.reversed()
+        floatAction.timingMode = .easeInEaseOut
+        floatAction2.timingMode = .easeInEaseOut
         return SCNAction.sequence([floatAction, floatAction2])
     }()
     
     /*! Create an action that pulses the opacity of a node.
     */
     func pulseAction() -> SCNAction {
-        let duration: NSTimeInterval = 8.0 / 6.0
-        let pulseAction = SCNAction.repeatActionForever(
+        let duration: TimeInterval = 8.0 / 6.0
+        let pulseAction = SCNAction.repeatForever(
             SCNAction.sequence([
-                SCNAction.fadeOpacityTo(0.3, duration: duration),
-                SCNAction.fadeOpacityTo(0.5, duration: duration),
-                SCNAction.fadeOpacityTo(1.0, duration: duration),
-                SCNAction.fadeOpacityTo(0.7, duration: duration),
-                SCNAction.fadeOpacityTo(0.4, duration: duration),
-                SCNAction.fadeOpacityTo(0.8, duration: duration)]))
+                SCNAction.fadeOpacity(to: 0.3, duration: duration),
+                SCNAction.fadeOpacity(to: 0.5, duration: duration),
+                SCNAction.fadeOpacity(to: 1.0, duration: duration),
+                SCNAction.fadeOpacity(to: 0.7, duration: duration),
+                SCNAction.fadeOpacity(to: 0.4, duration: duration),
+                SCNAction.fadeOpacity(to: 0.8, duration: duration)]))
         return pulseAction
     }
     
@@ -383,8 +383,8 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     */
     private func torchLight() -> SCNLight {
         let light = SCNLight()
-        light.type = SCNLightTypeOmni
-        light.color = SKColor.orangeColor()
+        light.type = SCNLight.LightType.omni
+        light.color = SKColor.orange
         light.attenuationStartDistance = 350
         light.attenuationEndDistance = 400
         light.attenuationFalloffExponent = 1
@@ -402,7 +402,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             s.template = SCNNode()
             
             let geometry = SCNBox(width: 20, height: 100, length: 20, chamferRadius: 10)
-            geometry.firstMaterial!.diffuse.contents = SKColor.brownColor()
+            geometry.firstMaterial!.diffuse.contents = SKColor.brown
             s.template!.geometry = geometry
             
             let particleEmitter = SCNNode()
@@ -431,9 +431,9 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         // load level dae and add all root children to the scene.
         #if os(OSX)
-            let options = [SCNSceneSourceConvertToYUpKey: true]
+            let options = [SCNSceneSource.LoadingOption.convertToYUp: true]
         #else
-            let options: [String: AnyObject] = [:]
+            let options: [SCNSceneSource.LoadingOption: AnyObject] = [:]
         #endif
         let scene = SCNScene(named: "level.dae", inDirectory: AAPLGameSimulation.pathForArtResource("level/"), options: options)
         for node in scene?.rootNode.childNodes ?? [] {
@@ -441,14 +441,14 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         }
         
         // retrieve the main camera
-        self.camera = self.rootNode?.childNodeWithName("camera_game", recursively: true)
+        self.camera = self.rootNode?.childNode(withName: "camera_game", recursively: true)
         
         // create our path that the player character will follow.
         self.calculatePathPositions()
         
         //-- Sun/Moon light
-        self.sunLight = self.rootNode?.childNodeWithName("FDirect001", recursively: true)
-        self.sunLight?.eulerAngles = SCNVector3Make(7.1 * SCNVectorFloat(M_PI_4), SCNVectorFloat(M_PI_4), 0)
+        self.sunLight = self.rootNode?.childNode(withName: "FDirect001", recursively: true)
+        self.sunLight?.eulerAngles = SCNVector3Make(7.1 * .pi/4, .pi/4, 0)
         self.sunLight?.light?.shadowSampleCount = 1; //to match iOS while testing: to be removed from the sample code
         _lightOffsetFromCharacter = SCNVector3Make(1500, 2000, 1000)
         
@@ -459,17 +459,17 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         if !self.highEnd {
             //use blob shadows on low end devices
-            self.sunLight?.light?.shadowMode = SCNShadowMode.Modulated
+            self.sunLight?.light?.shadowMode = SCNShadowMode.modulated
             self.sunLight?.light?.categoryBitMask = 0x2
             self.sunLight?.light?.orthographicScale = 60
-            self.sunLight?.eulerAngles = SCNVector3Make(SCNVectorFloat(M_PI_2), 0, 0)
+            self.sunLight?.eulerAngles = SCNVector3Make(.pi/2, 0, 0)
             _lightOffsetFromCharacter = SCNVector3Make(0, 2000, 0)
             
             self.sunLight?.light?.gobo?.contents = "art.scnassets/techniques/blobShadow.jpg"
             self.sunLight?.light?.gobo?.intensity = 0.5
             
-            let middle = self.rootNode?.childNodeWithName("dummy_front", recursively: true)
-            middle?.enumerateChildNodesUsingBlock {child, stop in
+            let middle = self.rootNode?.childNode(withName: "dummy_front", recursively: true)
+            middle?.enumerateChildNodes {child, stop in
                 child.categoryBitMask = 0x2
             }
         }
@@ -504,26 +504,26 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         // Optimize lighting and shadows
         // only the charadcter should cast shadows
-        self.rootNode?.enumerateChildNodesUsingBlock {child, stop in
+        self.rootNode?.enumerateChildNodes {child, stop in
             child.castsShadow = false
         }
-        self.playerCharacter?.enumerateChildNodesUsingBlock {child, stop in
+        self.playerCharacter?.enumerateChildNodes {child, stop in
             child.castsShadow = true
         }
         
         // Add some monkeys to the scene.
         self.addMonkeyAtPosition(SCNVector3Make(0, -30, -400), andRotation: 0)
-        self.addMonkeyAtPosition(SCNVector3Make(3211, 146, -400), andRotation: CGFloat(-M_PI_4))
+        self.addMonkeyAtPosition(SCNVector3Make(3211, 146, -400), andRotation: -CGFloat.pi/4)
         self.addMonkeyAtPosition(SCNVector3Make(5200, 330, 600), andRotation: 0)
         
         //- Volcano
-        var oldVolcano = self.rootNode?.childNodeWithName("volcano", recursively: true)
+        var oldVolcano = self.rootNode?.childNode(withName: "volcano", recursively: true)
         let volcanoDaeName = AAPLGameSimulation.pathForArtResource("level/volcano_effects.dae")
         let newVolcano = AAPLGameSimulation.loadNodeWithName("dummy_master",
             fromSceneNamed: volcanoDaeName)!
         oldVolcano?.addChildNode(newVolcano)
         oldVolcano?.geometry = nil
-        oldVolcano = newVolcano.childNodeWithName("volcano", recursively: true)
+        oldVolcano = newVolcano.childNode(withName: "volcano", recursively: true)
         oldVolcano = oldVolcano?.childNodes.first
         
         //-- Animate our dynamic volcano node.
@@ -536,12 +536,12 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         "#pragma transparent\n"
         
         //dim background
-        let back = self.rootNode?.childNodeWithName("dumy_rear", recursively: true)
-        back?.enumerateChildNodesUsingBlock {child, stop in
+        let back = self.rootNode?.childNode(withName: "dumy_rear", recursively: true)
+        back?.enumerateChildNodes {child, stop in
             child.castsShadow = false
             
             for material in child.geometry?.materials ?? [] {
-                material.lightingModelName = SCNLightingModelConstant
+                material.lightingModel = SCNMaterial.LightingModel.constant
                 material.multiply.contents = SKColor(white: 0.3, alpha: 1.0)
                 material.multiply.intensity = 1
             }
@@ -549,34 +549,34 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         //remove lighting from middle plane
         do {
-            let back = self.rootNode?.childNodeWithName("dummy_middle", recursively: true)
-            back?.enumerateChildNodesUsingBlock {child, stop in
+            let back = self.rootNode?.childNode(withName: "dummy_middle", recursively: true)
+            back?.enumerateChildNodes {child, stop in
                 for material in child.geometry?.materials ?? [] {
-                    material.lightingModelName = SCNLightingModelConstant
+                    material.lightingModel = SCNMaterial.LightingModel.constant
                 }
             }
         }
         
-        newVolcano.enumerateChildNodesUsingBlock {child, stop in
+        newVolcano.enumerateChildNodes {child, stop in
             if child !== oldVolcano && child.geometry != nil {
-                child.geometry!.firstMaterial?.lightingModelName = SCNLightingModelConstant
-                child.geometry!.firstMaterial?.multiply.contents = SKColor.whiteColor()
-                child.geometry!.shaderModifiers = [SCNShaderModifierEntryPointGeometry: shaderCode,
-                    SCNShaderModifierEntryPointFragment: fragmentShaderCode]
+                child.geometry!.firstMaterial?.lightingModel = SCNMaterial.LightingModel.constant
+                child.geometry!.firstMaterial?.multiply.contents = SKColor.white
+                child.geometry!.shaderModifiers = [SCNShaderModifierEntryPoint.geometry: shaderCode,
+                    SCNShaderModifierEntryPoint.fragment: fragmentShaderCode]
             }
         }
         
         
         if !self.highEnd {
-            self.rootNode?.enumerateChildNodesUsingBlock {child, stop in
+            self.rootNode?.enumerateChildNodes {child, stop in
                 for m in child.geometry?.materials ?? [] {
-                    m.lightingModelName = SCNLightingModelConstant
+                    m.lightingModel = SCNMaterial.LightingModel.constant
                 }
             }
             
-            self.playerCharacter?.enumerateChildNodesUsingBlock {child, stop in
+            self.playerCharacter?.enumerateChildNodes {child, stop in
                 for material in child.geometry?.materials ?? [] {
-                    material.lightingModelName = SCNLightingModelLambert
+                    material.lightingModel = SCNMaterial.LightingModel.lambert
                 }
             }
         }
@@ -587,14 +587,14 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     
     /*! Given a world position and rotation, load the monkey dae and place it into the world.
     */
-    private func addMonkeyAtPosition(worldPos: SCNVector3, andRotation rotation: CGFloat) {
+    private func addMonkeyAtPosition(_ worldPos: SCNVector3, andRotation rotation: CGFloat) {
         
         let palmTree = self.createMonkeyPalmTree()
         palmTree.position = worldPos
         palmTree.rotation = SCNVector4Make(0, 1, 0, SCNVectorFloat(rotation))
         self.rootNode?.addChildNode(palmTree)
         
-        if let monkey = palmTree.childNodeWithName("monkey", recursively: true) as? AAPLSkinnedCharacter {
+        if let monkey = palmTree.childNode(withName: "monkey", recursively: true) as? AAPLSkinnedCharacter {
             self.monkeys.append(monkey)
         }
     }
@@ -627,9 +627,9 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         var dynamicNodesWithVertColorAnimation: [SCNNode] = []
         
-        self.rootNode?.enumerateChildNodesUsingBlock {child, stop in
-            let range = child.parentNode?.name?.rangeOfString("vine")
-            if child.geometry?.geometrySourcesForSemantic(SCNGeometrySourceSemanticColor) == nil {
+        self.rootNode?.enumerateChildNodes {child, stop in
+            let range = child.parent?.name?.range(of: "vine")
+            if child.geometry?.getGeometrySources(for: .color) == nil {
                 //###
             } else if range != nil {
                 dynamicNodesWithVertColorAnimation.append(child)
@@ -644,10 +644,10 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         "_geometry.position.xyz += (speed * sin(u_time + timeOffset) * _geometry.color.rgb);\n"
         
         for dynamicNode in dynamicNodesWithVertColorAnimation {
-            dynamicNode.geometry!.shaderModifiers = [SCNShaderModifierEntryPointGeometry : shaderCode]
+            dynamicNode.geometry!.shaderModifiers = [SCNShaderModifierEntryPoint.geometry : shaderCode]
             let explodeAnimation = CABasicAnimation(keyPath: "timeOffset")
             explodeAnimation.duration = 2.0
-            explodeAnimation.repeatCount = FLT_MAX
+            explodeAnimation.repeatCount = .greatestFiniteMagnitude
             explodeAnimation.autoreverses = true
             explodeAnimation.toValue = AAPLRandomPercent() as Double
             explodeAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -717,7 +717,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     */
     private func doGameOver() {
         self.playerCharacter?.inRunAnimation = false
-        AAPLGameSimulation.sim.gameState = .PostGame
+        AAPLGameSimulation.sim.gameState = .postGame
     }
     
     func collideWithLava() {
@@ -730,10 +730,10 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         AAPLGameSimulation.sim.playSound("ack.caf")
         
         // Blink for a second
-        let blinkOffAction = SCNAction.fadeOutWithDuration(0.15)
-        let blinkOnAction = SCNAction.fadeInWithDuration(0.15)
+        let blinkOffAction = SCNAction.fadeOut(duration: 0.15)
+        let blinkOnAction = SCNAction.fadeIn(duration: 0.15)
         let cycle = SCNAction.sequence([blinkOffAction, blinkOnAction])
-        let repeatCycle = SCNAction.repeatAction(cycle, count: 7)
+        let repeatCycle = SCNAction.repeat(cycle, count: 7)
         
         self.hitByLavaReset = true
         
@@ -745,15 +745,15 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         }
     }
     
-    private func moveCharacterAlongPathWith(deltaTime: NSTimeInterval, currentState: AAPLGameState) {
-        if let playerCharacter = self.playerCharacter where playerCharacter.running {
-            if currentState == .InGame {
+    private func moveCharacterAlongPathWith(_ deltaTime: TimeInterval, currentState: AAPLGameState) {
+        if let playerCharacter = self.playerCharacter , playerCharacter.running {
+            if currentState == .inGame {
                 var walkSpeed = playerCharacter.walkSpeed
                 if self.playerCharacter!.jumping {
                     walkSpeed += playerCharacter.jumpBoost
                 }
                 
-                self.timeAlongPath += SCNVectorFloat(CGFloat(deltaTime) * walkSpeed * (playerCharacter.walkDirection == .Right ? 1 : -1))
+                self.timeAlongPath += SCNVectorFloat(CGFloat(deltaTime) * walkSpeed * (playerCharacter.walkDirection == .right ? 1 : -1))
                 
                 // limit how far the player can go in left and right directions.
                 if self.timeAlongPath < 0.0 {
@@ -784,7 +784,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     
     /*! Main game logic
     */
-    func update(deltaTime: NSTimeInterval, withRenderer aRenderer: SCNSceneRenderer) {
+    func update(_ deltaTime: TimeInterval, withRenderer aRenderer: SCNSceneRenderer) {
         
         // Based on gamestate:
         // ingame: Move the character if running.
@@ -805,16 +805,16 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         // Based on the time along path, rotation the character to face the correct direction.
         self.playerCharacter?.rotation = self.getPlayerDirectionFromCurrentPosition()
-        if currentState == .InGame {
+        if currentState == .inGame {
             self.playerCharacter?.update(deltaTime)
         }
         
         // Move the light
         self.updateSunLightPosition()
         
-        if currentState == .PreGame ||
-            currentState == .PostGame ||
-            currentState == .Paused {
+        if currentState == .preGame ||
+            currentState == .postGame ||
+            currentState == .paused {
                 return
         }
         
@@ -823,7 +823,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         }
         
         // Update timer and check for Game Over.
-        secondsRemaining -= NSTimeInterval(deltaTime)
+        secondsRemaining -= TimeInterval(deltaTime)
         if secondsRemaining < 0.0 {
             self.doGameOver()
         }
@@ -841,7 +841,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         _worldSpaceLabelScorePosition = appDelegate.scnView.unprojectPoint(SCNVector3Make(SCNVectorFloat(pt.x), SCNVectorFloat(pt.y), _screenSpaceplayerPosition.z))
     }
     
-    func collectBanana(banana: SCNNode) {
+    func collectBanana(_ banana: SCNNode) {
         // Flyoff the banana to the screen space position score label.
         // Don't increment score until the banana hits the score label.
         
@@ -850,16 +850,16 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         bananasCollected += 1
         
         let variance = 60
-        let randomY = SCNVectorFloat((Int(rand()) % variance) - (variance / 2))
+        let randomY = SCNVectorFloat((Int(arc4random()) % variance) - (variance / 2))
         let apexY = ((_worldSpaceLabelScorePosition.y * 0.8)) + randomY
         _worldSpaceLabelScorePosition.z = banana.position.z
-        let apex = SCNVector3Make(banana.position.x + 10 + SCNVectorFloat((Int(rand()) % variance) - (variance / 2)), apexY, banana.position.z)
+        let apex = SCNVector3Make(banana.position.x + 10 + SCNVectorFloat((Int(arc4random()) % variance) - (variance / 2)), apexY, banana.position.z)
         
-        let startFlyOff = SCNAction.moveTo(apex, duration: 0.25)
-        startFlyOff.timingMode = .EaseOut
+        let startFlyOff = SCNAction.move(to: apex, duration: 0.25)
+        startFlyOff.timingMode = .easeOut
         
-        let duration: NSTimeInterval = 0.25
-        let endFlyOff = SCNAction.customActionWithDuration(duration) {node, elapsedTime in
+        let duration: TimeInterval = 0.25
+        let endFlyOff = SCNAction.customAction(duration: duration) {node, elapsedTime in
             
             let t = SCNVectorFloat(elapsedTime) / SCNVectorFloat(duration)
             let v = SCNVector3(
@@ -869,7 +869,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             node.position = v
         }
         
-        endFlyOff.timingMode = .EaseInEaseOut
+        endFlyOff.timingMode = .easeInEaseOut
         let flyoffSequence = SCNAction.sequence([startFlyOff, endFlyOff])
         
         banana.runAction(flyoffSequence) {
@@ -885,7 +885,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         }
     }
     
-    func collectLargeBanana(largeBanana: SCNNode) {
+    func collectLargeBanana(_ largeBanana: SCNNode) {
         // When the player hits a large banana, explode it into smaller bananas.
         // We explode into a predefined pattern: square, diamond, letterA, letterB
         
@@ -928,7 +928,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         let vertSpacing: SCNVectorFloat = 40
         let spacing: SCNVectorFloat = 0.0075
-        let choice = choices[Int(rand()) % choices.count]
+        let choice = choices[Int(arc4random()) % choices.count]
         for y in 0..<5 {
             for x in 0..<5 {
                 let place = choice[(y * 5) + x]
@@ -949,8 +949,8 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
                 var endPoint = self.locationAlongPath(self.timeAlongPath + (spacing * SCNVectorFloat(x + 1)))
                 endPoint.y += (vertSpacing * SCNVectorFloat(y + 1));
                 
-                let flyoff = SCNAction.moveTo(endPoint, duration: AAPLRandomPercent() * 0.25)
-                flyoff.timingMode = .EaseInEaseOut
+                let flyoff = SCNAction.move(to: endPoint, duration: AAPLRandomPercent() * 0.25)
+                flyoff.timingMode = .easeInEaseOut
                 
                 // Prevent collision until the banana gets to the final resting spot.
                 banana.runAction(flyoff) {
@@ -966,7 +966,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         }
     }
     
-    func collideWithCoconut(coconut: SCNNode, point contactPoint: SCNVector3) {
+    func collideWithCoconut(_ coconut: SCNNode, point contactPoint: SCNVector3) {
         
         // No more collisions. Let it bounce away and fade out.
         coconut.physicsBody?.collisionBitMask = 0
@@ -974,8 +974,8 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             coconut.physicsBody!.contactTestBitMask = coconut.physicsBody!.collisionBitMask
         }
         coconut.runAction(SCNAction.sequence([
-            SCNAction.waitForDuration(1.0),
-            SCNAction.waitForDuration(1.0),
+            SCNAction.wait(duration: 1.0),
+            SCNAction.wait(duration: 1.0),
             SCNAction.removeFromParentNode()])) {
                 
                 self.coconuts = self.coconuts.filter{$0 !== coconut}
@@ -1008,8 +1008,8 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
             var endPoint = SCNVector3Make(0, 0, 0)
             endPoint.x -= (spacing * SCNVectorFloat(x)) + spacing
             
-            let flyoff = SCNAction.moveBy(endPoint, duration: AAPLRandomPercent() * 0.750)
-            flyoff.timingMode = .EaseInEaseOut
+            let flyoff = SCNAction.move(by: endPoint, duration: AAPLRandomPercent() * 0.750)
+            flyoff.timingMode = .easeInEaseOut
             
             banana.runAction(flyoff) {
                 banana.physicsBody?.categoryBitMask = GameCollisionCategoryBanana

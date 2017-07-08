@@ -18,7 +18,7 @@
 import SceneKit
 
 @objc(AAPLSkinnedCharacter)
-class AAPLSkinnedCharacter: SCNNode {
+class AAPLSkinnedCharacter: SCNNode, CAAnimationDelegate {
     
     // Dictionary used to look up the animations by key.
     var animationsDict: [String: CAAnimation] = [:]
@@ -27,10 +27,10 @@ class AAPLSkinnedCharacter: SCNNode {
     var mainSkeleton: SCNNode?
     
     func findAndSetSkeleton() {
-        self.enumerateChildNodesUsingBlock {child, stop in
+        self.enumerateChildNodes {child, stop in
             if child.skinner != nil {
                 self.mainSkeleton = child.skinner!.skeleton
-                stop.memory = true
+                stop.pointee = true
             }
         }
     }
@@ -42,10 +42,10 @@ class AAPLSkinnedCharacter: SCNNode {
         self.addChildNode(characterRootNode)
         
         //-- Find the first skeleton
-        self.enumerateChildNodesUsingBlock {child, stop in
+        self.enumerateChildNodes {child, stop in
             if child.skinner != nil {
                 self.mainSkeleton = child.skinner!.skeleton
-                stop.memory = true
+                stop.pointee = true
             }
         }
         
@@ -55,19 +55,19 @@ class AAPLSkinnedCharacter: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func cachedAnimationForKey(key: String) -> CAAnimation? {
+    func cachedAnimationForKey(_ key: String) -> CAAnimation? {
         return self.animationsDict[key]
     }
     
-    class func loadAnimationNamed(animationName: String, fromSceneNamed sceneName: String) -> CAAnimation? {
+    class func loadAnimationNamed(_ animationName: String, fromSceneNamed sceneName: String) -> CAAnimation? {
         // Load the DAE using SCNSceneSource in order to be able to retrieve the animation by its identifier
-        let url = NSBundle.mainBundle().URLForResource(sceneName, withExtension: "dae")!
+        let url = Bundle.main.url(forResource: sceneName, withExtension: "dae")!
         #if os(OSX)
-            let options: [String: AnyObject] = [SCNSceneSourceConvertToYUpKey: true]
+            let options: [SCNSceneSource.LoadingOption: Any] = [SCNSceneSource.LoadingOption.convertToYUp: true]
         #else
-            let options: [String: AnyObject] = [:]
+            let options: [SCNSceneSource.LoadingOption: Any] = [:]
         #endif
-        let sceneSource = SCNSceneSource(URL: url, options: options)
+        let sceneSource = SCNSceneSource(url: url, options: options)
         
         let animation = sceneSource?.entryWithIdentifier(animationName, withClass: CAAnimation.self)
         
@@ -78,9 +78,9 @@ class AAPLSkinnedCharacter: SCNNode {
         return animation
     }
     
-    func loadAndCacheAnimation(daeFile: String, withName name: String, forKey key: String) -> CAAnimation? {
+    func loadAndCacheAnimation(_ daeFile: String, withName name: String, forKey key: String) -> CAAnimation? {
         
-        let anim = self.dynamicType.loadAnimationNamed(name, fromSceneNamed: daeFile)
+        let anim = type(of: self).loadAnimationNamed(name, fromSceneNamed: daeFile)
         
         if anim != nil {
             self.animationsDict[key] = anim!
@@ -89,18 +89,18 @@ class AAPLSkinnedCharacter: SCNNode {
         return anim
     }
     
-    func loadAndCacheAnimation(daeFile: String, forKey key: String) -> CAAnimation? {
+    func loadAndCacheAnimation(_ daeFile: String, forKey key: String) -> CAAnimation? {
         return self.loadAndCacheAnimation(daeFile, withName: key, forKey: key)
     }
     
-    func chainAnimation(firstKey: String, toAnimation secondKey: String) {
+    func chainAnimation(_ firstKey: String, toAnimation secondKey: String) {
         self.chainAnimation(firstKey, toAnimation: secondKey, fadeTime: 0.85)
     }
     
-    func chainAnimation(firstKey: String, toAnimation secondKey: String, fadeTime: CGFloat) {
+    func chainAnimation(_ firstKey: String, toAnimation secondKey: String, fadeTime: CGFloat) {
         guard let
             firstAnim = self.cachedAnimationForKey(firstKey),
-            secondAnim = self.cachedAnimationForKey(secondKey)
+            let secondAnim = self.cachedAnimationForKey(secondKey)
             else {
                 return
         }
@@ -118,7 +118,7 @@ class AAPLSkinnedCharacter: SCNNode {
         }
     }
     
-    func update(deltaTime: NSTimeInterval) {
+    func update(_ deltaTime: TimeInterval) {
         // To be implemented by subclasses
     }
     

@@ -60,9 +60,9 @@ class AAPLCoconut: SCNNode {
                 let s_coconutThrowProtoObject = AAPLCoconut()
                 s_coconutThrowProtoObject.addChildNode(node)
                 
-                s_coconutThrowProtoObject.enumerateChildNodesUsingBlock {child, stop in
+                s_coconutThrowProtoObject.enumerateChildNodes {child, stop in
                     for m in child.geometry?.materials ?? [] {
-                        m.lightingModelName = SCNLightingModelConstant
+                        m.lightingModel = SCNMaterial.LightingModel.constant
                     }
                 }
                 return s_coconutThrowProtoObject

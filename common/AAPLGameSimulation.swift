@@ -27,18 +27,18 @@ protocol AAPLGameUIState: NSObjectProtocol {
     var score: Int {get}
     var coinsCollected: Int {get}
     var bananasCollected: Int {get}
-    var secondsRemaining: NSTimeInterval {get}
+    var secondsRemaining: TimeInterval {get}
     var scoreLabelLocation: CGPoint {get set}
     
 }
 
 
 enum AAPLGameState: Int {
-    case PreGame = 0
-    case InGame
-    case Paused
-    case PostGame
-    static let Count = PostGame.rawValue + 1
+    case preGame = 0
+    case inGame
+    case paused
+    case postGame
+    static let Count = postGame.rawValue + 1
 }
 
 let GameCollisionCategoryGround         = 1 << 2
@@ -59,7 +59,7 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
     
     var gameLevel = AAPLGameLevel()
     var gameUIScene: AAPLInGameScene?
-    private var _gameState: AAPLGameState = .Paused
+    private var _gameState: AAPLGameState = .paused
     private var controller: GCController? {
         didSet {
             didSetController(oldValue)
@@ -68,9 +68,9 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
     
     
     private var _walkSpeed: CGFloat = 0
-    private var _previousUpdateTime: NSTimeInterval = 0
-    private var _previousPhysicsUpdateTime: NSTimeInterval = 0
-    private var _deltaTime: NSTimeInterval = 0
+    private var _previousUpdateTime: TimeInterval = 0
+    private var _previousPhysicsUpdateTime: TimeInterval = 0
+    private var _deltaTime: TimeInterval = 0
     
     private var desaturationTechnique: SCNTechnique!
     
@@ -80,8 +80,8 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
     private func setupTechniques() {
         
         // The scene can be de-saturarted as a full screen effect.
-        let url = NSBundle.mainBundle().URLForResource("art.scnassets/techniques/desaturation", withExtension: "plist")
-        self.desaturationTechnique = SCNTechnique(dictionary: NSDictionary(contentsOfURL: url!)! as! [String : AnyObject])
+        let url = Bundle.main.url(forResource: "art.scnassets/techniques/desaturation", withExtension: "plist")
+        self.desaturationTechnique = SCNTechnique(dictionary: NSDictionary(contentsOf: url!)! as! [String : Any])
         self.desaturationTechnique.setValue(0.0, forKey: "Saturation")
     }
     
@@ -109,7 +109,7 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         self.desaturationTechnique.setValue(1.0, forKey: "Saturation")
         
-        SCNTransaction.setAnimationDuration(1.0)
+        SCNTransaction.animationDuration = 1.0
         
         SCNTransaction.commit()
         
@@ -122,7 +122,7 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         self.desaturationTechnique.setValue(1.0, forKey: "Saturation")
         
-        SCNTransaction.setAnimationDuration(1.0)
+        SCNTransaction.animationDuration = 1.0
         self.desaturationTechnique.setValue(0.0, forKey: "Saturation")
         
         SCNTransaction.commit()
@@ -137,7 +137,7 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         self.desaturationTechnique.setValue(1.0, forKey: "Saturation")
         
-        SCNTransaction.setAnimationDuration(1.0)
+        SCNTransaction.animationDuration = 1.0
         self.desaturationTechnique.setValue(0.0, forKey: "Saturation")
         
         SCNTransaction.commit()
@@ -151,11 +151,11 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         self.desaturationTechnique.setValue(0.0, forKey: "Saturation")
         
-        SCNTransaction.setAnimationDuration(1.0)
+        SCNTransaction.animationDuration = 1.0
         self.desaturationTechnique.setValue(1.0, forKey: "Saturation")
         SCNTransaction.commit()
         
-        let dropTechnique = SCNAction.waitForDuration(1.0)
+        let dropTechnique = SCNAction.wait(duration: 1.0)
         
         let appDelegate = AAPLAppDelegate.sharedAppDelegate()
         appDelegate.scnView.scene!.rootNode.runAction(dropTechnique) {
@@ -177,19 +177,19 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
             self.gameUIScene?.gameState = newState
             
             // Only reset the level from a non paused mode.
-            if newState == .InGame && _gameState != .Paused {
+            if newState == .inGame && _gameState != .paused {
                 self.gameLevel.resetLevel()
             }
             _gameState = newState
             
             // Based on the new game state... set the saturation value
             // that the techniques will use to render the scenekit view.
-            if _gameState == .PostGame {
+            if _gameState == .postGame {
                 self.setPostGameFilters()
-            } else if _gameState == .Paused {
+            } else if _gameState == .paused {
                 AAPLGameSimulation.sim.playSound("deposit.caf")
                 self.setPauseFilters()
-            } else if _gameState == .PreGame {
+            } else if _gameState == .preGame {
                 self.setPregameFilters()
             } else {
                 AAPLGameSimulation.sim.playSound("ack.caf")
@@ -200,7 +200,7 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
     
     /*! Our main input pump for the app.
     */
-    func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
+    func renderer(_ aRenderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         
         if _previousUpdateTime == 00 {
             _previousUpdateTime = time
@@ -217,20 +217,20 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         let gamePad = self.controller?.gamepad
         let extGamePad = self.controller?.extendedGamepad
         
-        if gamePad?.dpad.left.pressed ?? false || extGamePad?.leftThumbstick.left.pressed ?? false {
+        if gamePad?.dpad.left.isPressed ?? false || extGamePad?.leftThumbstick.left.isPressed ?? false {
             pressingLeft = true
         }
         
-        if gamePad?.dpad.right.pressed ?? false || extGamePad?.leftThumbstick.right.pressed ?? false {
+        if gamePad?.dpad.right.isPressed ?? false || extGamePad?.leftThumbstick.right.isPressed ?? false {
             pressingRight = true
         }
         
-        if gamePad?.buttonA.pressed ?? false ||
-            gamePad?.buttonB.pressed ?? false ||
-            gamePad?.buttonX.pressed ?? false ||
-            gamePad?.buttonY.pressed ?? false ||
-            gamePad?.leftShoulder.pressed ?? false ||
-            gamePad?.rightShoulder.pressed ?? false
+        if gamePad?.buttonA.isPressed ?? false ||
+            gamePad?.buttonB.isPressed ?? false ||
+            gamePad?.buttonX.isPressed ?? false ||
+            gamePad?.buttonY.isPressed ?? false ||
+            gamePad?.leftShoulder.isPressed ?? false ||
+            gamePad?.rightShoulder.isPressed ?? false
         {
             pressingJump = true
         }
@@ -247,11 +247,11 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
             pressingJump = true
         }
         
-        if self.gameState == .InGame && !self.gameLevel.hitByLavaReset {
+        if self.gameState == .inGame && !self.gameLevel.hitByLavaReset {
             if pressingLeft {
-                self.gameLevel.playerCharacter?.walkDirection = .Left
+                self.gameLevel.playerCharacter?.walkDirection = .left
             } else if pressingRight {
-                self.gameLevel.playerCharacter?.walkDirection = .Right
+                self.gameLevel.playerCharacter?.walkDirection = .right
             }
             
             if pressingLeft || pressingRight {
@@ -267,9 +267,9 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
             } else {
                 self.gameLevel.playerCharacter?.performJumpAndStop(true)
             }
-        } else if self.gameState == .PreGame || self.gameState == .PostGame {
+        } else if self.gameState == .preGame || self.gameState == .postGame {
             if pressingJump {
-                self.gameState = .InGame
+                self.gameState = .inGame
             }
         }
         
@@ -278,14 +278,14 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
     
     /*! Our main simulation pump for the app.
     */
-    func renderer(aRenderer: SCNSceneRenderer, didSimulatePhysicsAtTime time: NSTimeInterval) {
+    func renderer(_ aRenderer: SCNSceneRenderer, didSimulatePhysicsAtTime time: TimeInterval) {
         self.gameLevel.update(_deltaTime, withRenderer: aRenderer as! AAPLSceneView)
     }
     
     //MARK: - Collision handling
     
-    func physicsWorld(world: SCNPhysicsWorld, didBeginContact contact: SCNPhysicsContact) {
-        if self.gameState == .InGame {
+    func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
+        if self.gameState == .inGame {
             // Player to banana, large banana, or coconut
             if contact.nodeA == self.gameLevel.playerCharacter?.collideSphere {
                 self.playerCollideWithContact(contact.nodeB, point: contact.contactPoint)
@@ -304,7 +304,7 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         }
     }
     
-    private func playerCollideWithContact(node: SCNNode, point contactPoint: SCNVector3) {
+    private func playerCollideWithContact(_ node: SCNNode, point contactPoint: SCNVector3) {
         if self.gameLevel.bananas.contains(node) {
             self.gameLevel.collectBanana(node)
         } else if self.gameLevel.largeBananas.contains(node) {
@@ -316,9 +316,9 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         }
     }
     
-    private func handleCollideForCoconut(coconut: AAPLCoconut) {
+    private func handleCollideForCoconut(_ coconut: AAPLCoconut) {
         // Remove coconut from the world after it has time to fall offscreen.
-        coconut.runAction(SCNAction.waitForDuration(3.0)) {
+        coconut.runAction(SCNAction.wait(duration: 3.0)) {
             coconut.removeFromParentNode()
             self.gameLevel.coconuts = self.gameLevel.coconuts.filter{$0 !== coconut}
         }
@@ -326,21 +326,21 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
     
     //MARK: - Game Controller handling
     
-    @objc func controllerDidConnect(note: NSNotification) {
+    @objc func controllerDidConnect(_ note: Notification) {
         let controller = note.object as! GCController
         
         // Assign the last in controller.
         self.controller = controller
     }
     
-    @objc func controllerDidDisconnect(note: NSNotification) {
+    @objc func controllerDidDisconnect(_ note: Notification) {
         self.controller = nil
         
         let currentState = AAPLGameSimulation.sim.gameState
         
         // Pause the if we are in game and the controller was disconnected.
-        if currentState == .InGame {
-            AAPLGameSimulation.sim.gameState = .Paused
+        if currentState == .inGame {
+            AAPLGameSimulation.sim.gameState = .paused
         }
     }
     
@@ -353,53 +353,53 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         _controller.controllerPausedHandler = {myController in
             let currentState = AAPLGameSimulation.sim.gameState
             
-            if currentState == .Paused {
-                AAPLGameSimulation.sim.gameState = .InGame
-            } else if currentState == .InGame {
-                AAPLGameSimulation.sim.gameState = .Paused
+            if currentState == .paused {
+                AAPLGameSimulation.sim.gameState = .inGame
+            } else if currentState == .inGame {
+                AAPLGameSimulation.sim.gameState = .paused
             }
         }
     }
     
     //MARK: - Sound & Music
     
-    func playSound(soundFileName: String?) {
+    func playSound(_ soundFileName: String?) {
         guard let soundFileName = soundFileName else {
             return
         }
         
         let path = "Sounds/\(soundFileName)"
-        self.gameUIScene?.runAction(SKAction.playSoundFileNamed(path, waitForCompletion: false))
+        self.gameUIScene?.run(SKAction.playSoundFileNamed(path, waitForCompletion: false))
     }
     
-    func playMusic(soundFileName: String?) {
+    func playMusic(_ soundFileName: String?) {
         guard let soundFileName = soundFileName
-            where self.gameUIScene?.actionForKey(soundFileName) != nil else {
+            , self.gameUIScene?.action(forKey: soundFileName) != nil else {
                 return
         }
         
         let path = "Sounds/\(soundFileName)"
-        let repeatAction = SKAction.repeatActionForever(SKAction.playSoundFileNamed(path, waitForCompletion: true))
-        self.gameUIScene?.runAction(repeatAction, withKey: soundFileName)
+        let repeatAction = SKAction.repeatForever(SKAction.playSoundFileNamed(path, waitForCompletion: true))
+        self.gameUIScene?.run(repeatAction, withKey: soundFileName)
     }
     
     //MARK: - Resource Loading convenience
     
-    class func pathForArtResource(resourceName: String) -> String {
+    class func pathForArtResource(_ resourceName: String) -> String {
         let ArtFolderRoot = "art.scnassets"
         return "\(ArtFolderRoot)/\(resourceName)"
     }
     
-    class func loadNodeWithName(name: String?, fromSceneNamed path: String) -> SCNNode? {
+    class func loadNodeWithName(_ name: String?, fromSceneNamed path: String) -> SCNNode? {
         // Load the scene from the specified file
         #if os(OSX)
-            let options: [String: AnyObject] = [
-                SCNSceneSourceConvertToYUpKey: true,
-                SCNSceneSourceAnimationImportPolicyKey: SCNSceneSourceAnimationImportPolicyPlayRepeatedly
+            let options: [SCNSceneSource.LoadingOption: Any] = [
+                SCNSceneSource.LoadingOption.convertToYUp: true,
+                SCNSceneSource.LoadingOption.animationImportPolicy: SCNSceneSource.AnimationImportPolicy.playRepeatedly
             ]
         #else
-            let options: [String: AnyObject] = [
-                SCNSceneSourceAnimationImportPolicyKey: SCNSceneSourceAnimationImportPolicyPlayRepeatedly
+            let options: [SCNSceneSource.LoadingOption: Any] = [
+                SCNSceneSource.LoadingOption.animationImportPolicy: SCNSceneSource.AnimationImportPolicy.playRepeatedly
             ]
         #endif
         let scene = SCNScene(named: path,
@@ -411,7 +411,7 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         // Search for the node named "name"
         if name != nil {
-            node = node?.childNodeWithName(name!, recursively: true)
+            node = node?.childNode(withName: name!, recursively: true)
         } else {
             node = node?.childNodes[0]
         }
@@ -419,18 +419,18 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         return node
     }
     
-    class func loadParticleSystemWithName(name: String) -> SCNParticleSystem {
+    class func loadParticleSystemWithName(_ name: String) -> SCNParticleSystem {
         var path = "level/effects/\(name).scnp"
         path = self.pathForArtResource(path)
-        path = NSBundle.mainBundle().pathForResource(path, ofType: nil)!
-        let newSystem = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SCNParticleSystem
+        path = Bundle.main.path(forResource: path, ofType: nil)!
+        let newSystem = NSKeyedUnarchiver.unarchiveObject(withFile: path) as! SCNParticleSystem
         
         let lastPathComponent: String
         if newSystem.particleImage != nil {
-            lastPathComponent = (newSystem.particleImage as! NSURL).lastPathComponent!
+            lastPathComponent = (newSystem.particleImage as! URL).lastPathComponent
             path = "level/effects/\(lastPathComponent)"
             path = self.pathForArtResource(path)
-            let url = NSBundle.mainBundle().URLForResource(path, withExtension: nil)
+            let url = Bundle.main.url(forResource: path, withExtension: nil)
             newSystem.particleImage = url
         }
         return newSystem

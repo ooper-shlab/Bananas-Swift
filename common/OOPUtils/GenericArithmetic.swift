@@ -39,18 +39,18 @@ import Foundation
 import CoreGraphics
 
 protocol Computable: Comparable {
-    func +(lhs: Self, rhs: Self) -> Self
-    func -(lhs: Self, rhs: Self) -> Self
-    func /(lhs: Self, rhs: Self) -> Self
-    func *(lhs: Self, rhs: Self) -> Self
-    func %(lhs: Self, rhs: Self) -> Self
+    static func +(lhs: Self, rhs: Self) -> Self
+    static func -(lhs: Self, rhs: Self) -> Self
+    static func /(lhs: Self, rhs: Self) -> Self
+    static func *(lhs: Self, rhs: Self) -> Self
+    static func %(lhs: Self, rhs: Self) -> Self
     
-    prefix func ++ (inout val: Self) -> Self
-    prefix func -- (inout val: Self) -> Self
-    postfix func ++ (inout val: Self) -> Self
-    postfix func -- (inout val: Self) -> Self
+//    prefix func ++ (val: inout Self) -> Self
+//    prefix func -- (val: inout Self) -> Self
+//    postfix func ++ (val: inout Self) -> Self
+//    postfix func -- (val: inout Self) -> Self
 }
-protocol IntegerInitializable: IntegerLiteralConvertible {
+protocol IntegerInitializable: ExpressibleByIntegerLiteral {
     init(_: Int)
     init(_: UInt)
     init(_: Int8)
@@ -63,17 +63,17 @@ protocol IntegerInitializable: IntegerLiteralConvertible {
     init(_: UInt64)
 }
 protocol IntegerComputable: IntegerInitializable, Computable {
-    func &+(lhs: Self, rhs: Self) -> Self
-    func &-(lhs: Self, rhs: Self) -> Self
+    static func &+(lhs: Self, rhs: Self) -> Self
+    static func &-(lhs: Self, rhs: Self) -> Self
 //    func &/(lhs: Self, rhs: Self) -> Self
-    func &*(lhs: Self, rhs: Self) -> Self
+    static func &*(lhs: Self, rhs: Self) -> Self
 //    func &%(lhs: Self, rhs: Self) -> Self
     
-    func << (lhs: Self, rhs: Self) -> Self
-    func >> (lhs: Self, rhs: Self) -> Self
+    static func << (lhs: Self, rhs: Self) -> Self
+    static func >> (lhs: Self, rhs: Self) -> Self
 }
-protocol SignedIntegerComputable: IntegerComputable, SignedNumberType {}
-protocol FloatInitializable: FloatLiteralConvertible, IntegerInitializable {
+protocol SignedIntegerComputable: IntegerComputable, SignedNumber {}
+protocol FloatInitializable: ExpressibleByFloatLiteral, IntegerInitializable {
     init(_: Float)
     init(_: Double)
     init(_: CGFloat)

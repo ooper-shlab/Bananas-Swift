@@ -23,16 +23,16 @@ import SceneKit
     typealias SCNVectorFloat = Float
 #endif
 
-func AAPLMatrix4GetPosition(matrix: SCNMatrix4) -> SCNVector3 {
+func AAPLMatrix4GetPosition(_ matrix: SCNMatrix4) -> SCNVector3 {
     return SCNVector3(x: matrix.m41, y: matrix.m42, z: matrix.m43)
 }
 
-func AAPLMatrix4SetPosition(_matrix: SCNMatrix4, _ v: SCNVector3) -> SCNMatrix4 {
+func AAPLMatrix4SetPosition(_ _matrix: SCNMatrix4, _ v: SCNVector3) -> SCNMatrix4 {
     var matrix = _matrix
     matrix.m41 = v.x; matrix.m42 = v.y; matrix.m43 = v.z
     return matrix
 }
 
-func AAPLRandomPercent<T: FloatComputable>() -> T {
-    return (T(rand() % 100)) * 0.01
+func AAPLRandomPercent<T: BinaryFloatingPoint>() -> T {
+    return (T(arc4random() % 100)) * 0.01
 }

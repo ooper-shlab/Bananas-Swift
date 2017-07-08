@@ -23,13 +23,13 @@ class AAPLAppDelegateOSX: AAPLAppDelegate, NSApplicationDelegate {
 
     @IBOutlet var window: NSWindow?
 
-    func applicationDidFinishLaunching(notification: NSNotification) {
+    func applicationDidFinishLaunching(_ notification: Notification) {
         self.window?.disableSnapshotRestoration()
 
         self.commonApplicationDidFinishLaunchingWithCompletionHandler(nil)
     }
 
-    func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }
 

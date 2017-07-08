@@ -27,85 +27,85 @@ class AAPLAppDelegate: NSObject {
     class func sharedAppDelegate() -> AAPLAppDelegate {
         #if os(iOS)
 //	return [UIApplication sharedApplication].delegate;
-            return UIApplication.sharedApplication().delegate as! AAPLAppDelegate
+            return UIApplication.shared.delegate as! AAPLAppDelegate
         #else
             return NSApp.delegate as! AAPLAppDelegate
         #endif
     }
 
-    private func listenForGameControllerWithSim(gameSim: AAPLGameSimulation) {
+    private func listenForGameControllerWithSim(_ gameSim: AAPLGameSimulation) {
 	//-- GameController hook up
-        NSNotificationCenter.defaultCenter().addObserver(gameSim,
+        NotificationCenter.default.addObserver(gameSim,
             selector: #selector(AAPLGameSimulation.controllerDidConnect),
-            name: GCControllerDidConnectNotification,
+            name: .GCControllerDidConnect,
             object: nil)
 
-        NSNotificationCenter.defaultCenter().addObserver(gameSim,
+        NotificationCenter.default.addObserver(gameSim,
             selector: #selector(AAPLGameSimulation.controllerDidDisconnect),
-            name: GCControllerDidDisconnectNotification,
+            name: .GCControllerDidDisconnect,
             object: nil)
 
-        GCController.startWirelessControllerDiscoveryWithCompletionHandler(nil)
+        GCController.startWirelessControllerDiscovery(completionHandler: nil)
     }
 
     func togglePaused() {
         let currentState = AAPLGameSimulation.sim.gameState
 
-        if currentState == .Paused {
-            AAPLGameSimulation.sim.gameState = .InGame
-        } else if currentState == .InGame {
-            AAPLGameSimulation.sim.gameState = .Paused
+        if currentState == .paused {
+            AAPLGameSimulation.sim.gameState = .inGame
+        } else if currentState == .inGame {
+            AAPLGameSimulation.sim.gameState = .paused
         }
     }
 
-    func commonApplicationDidFinishLaunchingWithCompletionHandler(completionHandler: (()->Void)?) {
+    func commonApplicationDidFinishLaunchingWithCompletionHandler(_ completionHandler: (()->Void)?) {
 	// Debugging and Stats
 #if DEBUG
         self.scnView.showsStatistics = true
 #endif
 
-        self.scnView.backgroundColor = SKColor.blackColor()
+        self.scnView.backgroundColor = SKColor.black
 
-        let progress = NSProgress(totalUnitCount: 10)
+        let progress = Progress(totalUnitCount: 10)
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            progress.becomeCurrentWithPendingUnitCount(2)
+        DispatchQueue.global(qos: .default).async {
+            progress.becomeCurrent(withPendingUnitCount: 2)
 
             let ui = AAPLInGameScene(size: self.scnView.bounds.size)
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 self.scnView.overlaySKScene = ui
             }
 
             progress.resignCurrent()
-            progress.becomeCurrentWithPendingUnitCount(3)
+            progress.becomeCurrent(withPendingUnitCount: 3)
 
             let gameSim = AAPLGameSimulation.sim
             gameSim.gameUIScene = ui
 
             progress.resignCurrent()
-            progress.becomeCurrentWithPendingUnitCount(3)
+            progress.becomeCurrent(withPendingUnitCount: 3)
 
 
             SCNTransaction.flush()
 
 		// Preload
-            self.scnView.prepareObject(gameSim, shouldAbortBlock: nil)
+            self.scnView.prepare(gameSim, shouldAbortBlock: nil)
             progress.resignCurrent()
-            progress.becomeCurrentWithPendingUnitCount(1)
+            progress.becomeCurrent(withPendingUnitCount: 1)
 
 		// Game Play Specific Code
             gameSim.gameUIScene!.gameStateDelegate = gameSim.gameLevel
             gameSim.gameLevel.resetLevel()
-            gameSim.gameState = .PreGame
+            gameSim.gameState = .preGame
 
             progress.resignCurrent()
-            progress.becomeCurrentWithPendingUnitCount(1)
+            progress.becomeCurrent(withPendingUnitCount: 1)
 
 		// GameController hook up
             self.listenForGameControllerWithSim(gameSim)
 
 
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 self.scnView.scene = gameSim
                 self.scnView.delegate = gameSim
                 completionHandler?()

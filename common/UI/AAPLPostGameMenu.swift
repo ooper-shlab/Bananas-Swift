@@ -36,96 +36,96 @@ class AAPLPostGameMenu: SKNode {
         super.init()
         
         let menuHeight = frameSize.height * 0.8
-        let background = SKSpriteNode(color: SKColor.blackColor(),
-            size: CGSizeMake(frameSize.width * 0.8, menuHeight))
+        let background = SKSpriteNode(color: SKColor.black,
+            size: CGSize(width: frameSize.width * 0.8, height: menuHeight))
         background.zPosition = -1
         background.alpha = 0.5
-        background.position = CGPointMake(0, -0.2 * menuHeight)
+        background.position = CGPoint(x: 0, y: -0.2 * menuHeight)
         self.addChild(background)
         
-        self.myLabel.position = CGPointMake(CGRectGetMidX(self.frame),
-            CGRectGetMidY(self.frame))
+        self.myLabel.position = CGPoint(x: self.frame.midX,
+            y: self.frame.midY)
         
-        self.position = CGPointMake(frameSize.width * 0.5, frameSize.height * 0.5)
-        self.userInteractionEnabled = true
-        self.myLabel.userInteractionEnabled = true
+        self.position = CGPoint(x: frameSize.width * 0.5, y: frameSize.height * 0.5)
+        self.isUserInteractionEnabled = true
+        self.myLabel.isUserInteractionEnabled = true
         self.addChild(self.myLabel)
         AAPLInGameScene.dropShadowOnLabel(self.myLabel)
         
-        var      bananaLocation = CGPointMake(frameSize.width * -0.4, CGRectGetMidY(self.frame) * -0.4)
-        var	   coinLocation = CGPointMake(frameSize.width * -0.4, CGRectGetMidY(self.frame) * -0.6)
-        var       totalLocation = CGPointMake(frameSize.width * -0.4, CGRectGetMidY(self.frame) * -0.8)
-        var bananaScoreLocation = CGPointMake(frameSize.width * +0.4, CGRectGetMidY(self.frame) * -0.4)
-        var   coinScoreLocation = CGPointMake(frameSize.width * +0.4, CGRectGetMidY(self.frame) * -0.6)
-        var  totalScoreLocation = CGPointMake(frameSize.width * +0.4, CGRectGetMidY(self.frame) * -0.8)
+        var      bananaLocation = CGPoint(x: frameSize.width * -0.4, y: self.frame.midY * -0.4)
+        var	   coinLocation = CGPoint(x: frameSize.width * -0.4, y: self.frame.midY * -0.6)
+        var       totalLocation = CGPoint(x: frameSize.width * -0.4, y: self.frame.midY * -0.8)
+        var bananaScoreLocation = CGPoint(x: frameSize.width * +0.4, y: self.frame.midY * -0.4)
+        var   coinScoreLocation = CGPoint(x: frameSize.width * +0.4, y: self.frame.midY * -0.6)
+        var  totalScoreLocation = CGPoint(x: frameSize.width * +0.4, y: self.frame.midY * -0.8)
         
         self.bananaText = self.myLabel.copy() as! SKLabelNode
         self.bananaText.text = "Bananas"
         self.bananaText.fontSize = 0.1 * menuHeight
         self.bananaText.setScale(0.8)
-        bananaLocation.x += (CGRectGetWidth(self.bananaText.calculateAccumulatedFrame()) * 0.5) + frameSize.width * 0.1
-        self.bananaText.position = CGPointMake(bananaLocation.x, -2000)
+        bananaLocation.x += (self.bananaText.calculateAccumulatedFrame().width * 0.5) + frameSize.width * 0.1
+        self.bananaText.position = CGPoint(x: bananaLocation.x, y: -2000)
         self.addChild(self.bananaText)
         AAPLInGameScene.dropShadowOnLabel(self.bananaText)
         
         self.bananaScore = self.bananaText.copy() as! SKLabelNode
         self.bananaScore.text = "000"
-        bananaScoreLocation.x -= ((CGRectGetWidth(self.bananaScore.calculateAccumulatedFrame()) * 0.5) + frameSize.width * 0.1)
-        self.bananaScore.position = CGPointMake(bananaScoreLocation.x, -2000)
+        bananaScoreLocation.x -= ((self.bananaScore.calculateAccumulatedFrame().width * 0.5) + frameSize.width * 0.1)
+        self.bananaScore.position = CGPoint(x: bananaScoreLocation.x, y: -2000)
         self.addChild(self.bananaScore)
         
         
         self.coinText = self.bananaText.copy() as! SKLabelNode
         self.coinText.text = "Large Bananas"
-        coinLocation.x += (CGRectGetWidth(self.coinText.calculateAccumulatedFrame()) * 0.5) + frameSize.width * 0.1
-        self.coinText.position = CGPointMake(coinLocation.x, -2000)
+        coinLocation.x += (self.coinText.calculateAccumulatedFrame().width * 0.5) + frameSize.width * 0.1
+        self.coinText.position = CGPoint(x: coinLocation.x, y: -2000)
         self.addChild(self.coinText)
         AAPLInGameScene.dropShadowOnLabel(self.coinText)
         
         
         self.coinScore = self.coinText.copy() as! SKLabelNode
         self.coinScore.text = "000"
-        coinScoreLocation.x -= ((CGRectGetWidth(self.coinScore.calculateAccumulatedFrame()) * 0.5) + frameSize.width * 0.1)
-        self.coinScore.position = CGPointMake(coinScoreLocation.x, -2000)
+        coinScoreLocation.x -= ((self.coinScore.calculateAccumulatedFrame().width * 0.5) + frameSize.width * 0.1)
+        self.coinScore.position = CGPoint(x: coinScoreLocation.x, y: -2000)
         self.addChild(self.coinScore)
         
         self.totalText = self.bananaText.copy() as! SKLabelNode
         self.totalText.text = "Total"
-        totalLocation.x += (CGRectGetWidth(self.totalText.calculateAccumulatedFrame()) * 0.5) + frameSize.width * 0.1
-        self.totalText.position = CGPointMake(totalLocation.x, -2000)
+        totalLocation.x += (self.totalText.calculateAccumulatedFrame().width * 0.5) + frameSize.width * 0.1
+        self.totalText.position = CGPoint(x: totalLocation.x, y: -2000)
         self.addChild(self.totalText)
         AAPLInGameScene.dropShadowOnLabel(self.totalText)
         
         
         self.totalScore = self.totalText.copy() as! SKLabelNode
         self.totalScore.text = "000"
-        totalScoreLocation.x -= ((CGRectGetWidth(self.totalScore.calculateAccumulatedFrame()) * 0.5) + frameSize.width * 0.1)
-        self.totalScore.position = CGPointMake(totalScoreLocation.x, -2000)
+        totalScoreLocation.x -= ((self.totalScore.calculateAccumulatedFrame().width * 0.5) + frameSize.width * 0.1)
+        self.totalScore.position = CGPoint(x: totalScoreLocation.x, y: -2000)
         self.addChild(self.totalScore)
         
-        let flyup = SKAction.moveTo(CGPointMake(frameSize.width * 0.5, frameSize.height - 100), duration: 0.25)
-        flyup.timingMode = .EaseInEaseOut
+        let flyup = SKAction.move(to: CGPoint(x: frameSize.width * 0.5, y: frameSize.height - 100), duration: 0.25)
+        flyup.timingMode = .easeInEaseOut
         
-        let flyupBananas = SKAction.moveTo(bananaLocation, duration: 0.25)
-        let flyupBananasScore = SKAction.moveTo(bananaScoreLocation, duration: 0.25)
-        flyupBananas.timingMode = .EaseInEaseOut
-        flyupBananasScore.timingMode = .EaseInEaseOut
+        let flyupBananas = SKAction.move(to: bananaLocation, duration: 0.25)
+        let flyupBananasScore = SKAction.move(to: bananaScoreLocation, duration: 0.25)
+        flyupBananas.timingMode = .easeInEaseOut
+        flyupBananasScore.timingMode = .easeInEaseOut
         
-        let flyupCoins = SKAction.moveTo(coinLocation, duration: 0.25)
-        let flyupCoinsScore = SKAction.moveTo(coinScoreLocation, duration: 0.25)
-        flyupCoins.timingMode = .EaseInEaseOut
-        flyupCoinsScore.timingMode = .EaseInEaseOut
+        let flyupCoins = SKAction.move(to: coinLocation, duration: 0.25)
+        let flyupCoinsScore = SKAction.move(to: coinScoreLocation, duration: 0.25)
+        flyupCoins.timingMode = .easeInEaseOut
+        flyupCoinsScore.timingMode = .easeInEaseOut
         
-        let flyupTotal = SKAction.moveTo(totalLocation, duration: 0.25)
-        let flyupTotalScore = SKAction.moveTo(totalScoreLocation, duration: 0.25)
-        flyupTotal.timingMode = .EaseInEaseOut
-        flyupTotalScore.timingMode = .EaseInEaseOut
+        let flyupTotal = SKAction.move(to: totalLocation, duration: 0.25)
+        let flyupTotalScore = SKAction.move(to: totalScoreLocation, duration: 0.25)
+        flyupTotal.timingMode = .easeInEaseOut
+        flyupTotalScore.timingMode = .easeInEaseOut
         
         let bananasCollected = self.gameStateDelegate?.bananasCollected ?? 0
         let coinsCollected = self.gameStateDelegate?.coinsCollected ?? 0
         let totalCollected = bananasCollected + (coinsCollected * 100)
         
-        let countUpBananas = SKAction.customActionWithDuration(NSTimeInterval(bananasCollected) / 100.0) {node, elapsedTime in
+        let countUpBananas = SKAction.customAction(withDuration: TimeInterval(bananasCollected) / 100.0) {node, elapsedTime in
             if bananasCollected > 0 {
                 let label = node as! SKLabelNode
                 let total = Int((elapsedTime / (CGFloat(bananasCollected) / 100.0)) * CGFloat(bananasCollected))
@@ -137,7 +137,7 @@ class AAPLPostGameMenu: SKNode {
             }
             
         }
-        let countUpCoins = SKAction.customActionWithDuration(NSTimeInterval(coinsCollected) / 100.0) {node, elapsedTime in
+        let countUpCoins = SKAction.customAction(withDuration: TimeInterval(coinsCollected) / 100.0) {node, elapsedTime in
             if coinsCollected > 0 {
                 let label = node as! SKLabelNode
                 let total = Int((elapsedTime / (CGFloat(coinsCollected) / 100.0)) * CGFloat(coinsCollected))
@@ -147,7 +147,7 @@ class AAPLPostGameMenu: SKNode {
                 }
             }
         }
-        let countUpTotal = SKAction.customActionWithDuration(NSTimeInterval(totalCollected / 5) / 100.0) {node, elapsedTime in
+        let countUpTotal = SKAction.customAction(withDuration: TimeInterval(totalCollected / 5) / 100.0) {node, elapsedTime in
             if totalCollected > 0 {
                 let label = node as! SKLabelNode
                 let total = Int((elapsedTime / (CGFloat(totalCollected / 5) / 100.0)) * CGFloat(totalCollected))
@@ -159,21 +159,21 @@ class AAPLPostGameMenu: SKNode {
         }
         
         // Play actions in sequence: Fly up, count up. repeat with the next line.
-        self.runAction(flyup) {
+        self.run(flyup) {
             //-- fly up the bananas collected.
-            self.bananaText.runAction(flyupBananas)
-            self.bananaScore.runAction(flyupBananasScore) {
+            self.bananaText.run(flyupBananas)
+            self.bananaScore.run(flyupBananasScore) {
                 //-- count!
-                self.bananaScore.runAction(countUpBananas) {
+                self.bananaScore.run(countUpBananas) {
                     self.bananaScore.text = String(bananasCollected)
-                    self.coinText.runAction(flyupCoins)
-                    self.coinScore.runAction(flyupCoinsScore) {
+                    self.coinText.run(flyupCoins)
+                    self.coinScore.run(flyupCoinsScore) {
                         //-- count
-                        self.coinScore.runAction(countUpCoins) {
+                        self.coinScore.run(countUpCoins) {
                             self.coinScore.text = String(coinsCollected)
-                            self.totalText.runAction(flyupTotal)
-                            self.totalScore.runAction(flyupTotalScore) {
-                                self.totalScore.runAction(countUpTotal) {
+                            self.totalText.run(flyupTotal)
+                            self.totalScore.run(flyupTotalScore) {
+                                self.totalScore.run(countUpTotal) {
                                     self.totalScore.text = String(totalCollected)
                                 }
                             }
@@ -189,12 +189,12 @@ class AAPLPostGameMenu: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func touchUpAtPoint(location: CGPoint) {
-        let touchedNode = self.scene?.nodeAtPoint(location)
+    func touchUpAtPoint(_ location: CGPoint) {
+        let touchedNode = self.scene?.atPoint(location)
         
         if touchedNode != nil {
-            self.hidden = true
-            AAPLGameSimulation.sim.gameState = .InGame
+            self.isHidden = true
+            AAPLGameSimulation.sim.gameState = .inGame
         }
     }
     

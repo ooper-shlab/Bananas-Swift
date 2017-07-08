@@ -42,7 +42,7 @@ import Foundation
 //  Making a type conforming to any `LiteralConvertible` may affect whole code in the same project.
 //  You should better find another way to treat literals, if some bad side-effects have been found.
 //
-extension UInt16: UnicodeScalarLiteralConvertible {
+extension UInt16: ExpressibleByUnicodeScalarLiteral {
     public init(unicodeScalarLiteral value: UnicodeScalar) {
         self = UInt16(value.value)
     }

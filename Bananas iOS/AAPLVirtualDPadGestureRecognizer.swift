@@ -27,29 +27,29 @@ class AAPLVirtualDPadGestureRecognizer : UIGestureRecognizer {
     
     var buttonAPressed: Bool = false
     
-    var virtialDPadRect: CGRect = CGRectMake(0, 0, 0.5, 1)
+    var virtialDPadRect: CGRect = CGRect(x: 0, y: 0, width: 0.5, height: 1)
     var virtualDPadWalkThreshold: CGFloat = 20
     var virtualDPadRunThreshold: CGFloat = 40
     
-    var buttonARect: CGRect = CGRectMake(0.5, 0, 0.5, 1)
+    var buttonARect: CGRect = CGRect(x: 0.5, y: 0, width: 0.5, height: 1)
     
     private var _dpadTouch: UITouch?
     private var _originalLocation: CGPoint = CGPoint()
     private var _buttonATouch: UITouch?
     
-    override init(target: AnyObject?, action: Selector) {
+    override init(target: Any?, action: Selector?) {
         super.init(target: target, action: action)
-        self.virtialDPadRect = CGRectMake(0, 0, 0.5, 1)
-        self.buttonARect = CGRectMake(0.5, 0, 0.5, 1)
+        self.virtialDPadRect = CGRect(x: 0, y: 0, width: 0.5, height: 1)
+        self.buttonARect = CGRect(x: 0.5, y: 0, width: 0.5, height: 1)
         self.virtualDPadWalkThreshold = 20
         self.virtualDPadRunThreshold = 40
     }
     
-    private func touch(touch: UITouch, isInRect _rect: CGRect) -> Bool {
+    private func touch(_ touch: UITouch, isInRect _rect: CGRect) -> Bool {
         let bounds = self.view!.bounds
         var rect = _rect
-        rect = CGRectApplyAffineTransform(rect, CGAffineTransformMakeScale(bounds.size.width, bounds.size.height))
-        return CGRectContainsPoint(rect, touch.locationInView(self.view))
+        rect = rect.applying(CGAffineTransform(scaleX: bounds.size.width, y: bounds.size.height))
+        return rect.contains(touch.location(in: self.view))
     }
     
     override func reset() {
@@ -61,36 +61,36 @@ class AAPLVirtualDPadGestureRecognizer : UIGestureRecognizer {
         super.reset()
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         for touch in touches {
             if _dpadTouch == nil && self.touch(touch, isInRect: self.virtialDPadRect) {
                 _dpadTouch = touch
-                _originalLocation = touch.locationInView(self.view)
-                self.state = .Began
+                _originalLocation = touch.location(in: self.view)
+                self.state = .began
             } else if _buttonATouch == nil && self.touch(touch, isInRect: self.buttonARect) {
                 _buttonATouch = touch
                 self.buttonAPressed = true
-                self.state = .Began
+                self.state = .began
             } else {
-                self.ignoreTouch(touch, forEvent: event)
+                self.ignore(touch, for: event)
             }
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
         for touch in touches {
             if touch === _dpadTouch {
-                let location = touch.locationInView(self.view)
+                let location = touch.location(in: self.view)
                 let deltaX = location.x - _originalLocation.x
                 self.leftPressed = (deltaX < -self.virtualDPadWalkThreshold)
                 self.rightPressed = (deltaX > self.virtualDPadWalkThreshold)
                 self.running = abs(deltaX) > self.virtualDPadRunThreshold
-                self.state = .Changed
+                self.state = .changed
             }
         }
     }
     
-    override func touchesCancelled(touches: Set<UITouch>, withEvent event: UIEvent) {
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
         if _dpadTouch != nil || _buttonATouch != nil {
             for touch in touches {
                 if touch === _dpadTouch {
@@ -103,14 +103,14 @@ class AAPLVirtualDPadGestureRecognizer : UIGestureRecognizer {
                 }
             }
             if _dpadTouch != nil || _buttonATouch != nil {
-                self.state = .Changed
+                self.state = .changed
             } else {
-                self.state = .Cancelled
+                self.state = .cancelled
             }
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
         if _dpadTouch != nil || _buttonATouch != nil {
             for touch in touches {
                 if touch === _dpadTouch {
@@ -123,9 +123,9 @@ class AAPLVirtualDPadGestureRecognizer : UIGestureRecognizer {
                 }
             }
             if _dpadTouch != nil || _buttonATouch != nil {
-                self.state = .Changed
+                self.state = .changed
             } else {
-                self.state = .Ended
+                self.state = .ended
             }
         }
     }

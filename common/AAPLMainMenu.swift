@@ -27,8 +27,8 @@ class AAPLMainMenu: SKNode {
         self.gameLogo = SKSpriteNode(imageNamed: "art.scnassets/level/interface/logo_bananas.png")
         super.init()
         
-        self.position = CGPointMake(frameSize.width * 0.5, frameSize.height * 0.15)
-        self.userInteractionEnabled = true
+        self.position = CGPoint(x: frameSize.width * 0.5, y: frameSize.height * 0.15)
+        self.isUserInteractionEnabled = true
         
         // resize logo to fit the screen
         var size = self.gameLogo.size
@@ -37,8 +37,8 @@ class AAPLMainMenu: SKNode {
         size.height *= factor
         self.gameLogo.size = size
         
-        self.gameLogo.anchorPoint = CGPointMake(1, 0)
-        self.gameLogo.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        self.gameLogo.anchorPoint = CGPoint(x: 1, y: 0)
+        self.gameLogo.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         self.addChild(self.gameLogo)
         
     }
@@ -47,9 +47,9 @@ class AAPLMainMenu: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func touchUpAtPoint(location: CGPoint) {
-        self.hidden = true
-        AAPLGameSimulation.sim.gameState = .InGame
+    func touchUpAtPoint(_ location: CGPoint) {
+        self.isHidden = true
+        AAPLGameSimulation.sim.gameState = .inGame
     }
     
 }

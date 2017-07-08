@@ -18,8 +18,8 @@
 import SceneKit
 
 enum WalkDirection: Int {
-    case Left = 0
-    case Right
+    case left = 0
+    case right
 }
 
 @objc(AAPLPlayerCharacter)
@@ -32,7 +32,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
     var walkSpeed: CGFloat = 0.0
     var jumpBoost: CGFloat = 0.0
     
-    private var _walkDirection: WalkDirection = .Right
+    private var _walkDirection: WalkDirection = .right
     
     private(set) var collideSphere: SCNNode
     
@@ -43,17 +43,17 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
     var dustWalking: SCNParticleSystem
     
     enum AAPLCharacterAnimation: Int {
-        case Die = 0
-        case Run
-        case Jump
-        case JumpFalling
-        case JumpLand
-        case Idle
-        case GetHit
-        case Bored
-        case RunStart
-        case RunStop
-        case Count
+        case die = 0
+        case run
+        case jump
+        case jumpFalling
+        case jumpLand
+        case idle
+        case getHit
+        case bored
+        case runStart
+        case runStop
+        case count
     }
     
     private var _isWalking: Bool = false
@@ -70,30 +70,30 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
     private var cameraHelper: SCNNode
     private var ChangingDirection: Bool = false
     
-    class func keyForAnimationType(animType: AAPLCharacterAnimation) -> String {
+    class func keyForAnimationType(_ animType: AAPLCharacterAnimation) -> String {
         
         switch animType {
-        case .Bored:
+        case .bored:
             return "bored-1"
-        case .Die:
+        case .die:
             return "die-1"
-        case .GetHit:
+        case .getHit:
             return "hit-1"
-        case .Idle:
+        case .idle:
             return "idle-1"
-        case .Jump:
+        case .jump:
             return "jump_start-1"
-        case .JumpFalling:
+        case .jumpFalling:
             return "jump_falling-1"
-        case .JumpLand:
+        case .jumpLand:
             return "jump_land-1"
-        case .Run:
+        case .run:
             return "run-1"
-        case .RunStart:
+        case .runStart:
             return "run_start-1"
-        case .RunStop:
+        case .runStop:
             return "run_stop-1"
-        case .Count:
+        case .count:
             return ""
         }
     }
@@ -115,7 +115,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
         self.walkSpeed = baseWalkSpeed * 2
         self.jumping = false
         groundPlaneHeight = 0.0
-        self.walkDirection = .Right
+        self.walkDirection = .right
         
         // Create a node to help position the camera and attach to self.
         self.addChildNode(self.cameraHelper)
@@ -125,7 +125,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
         collideSphere.position = SCNVector3Make(0, 80, 0)
         let geo = SCNCapsule(capRadius: 90, height: 160)
         let shape2 = SCNPhysicsShape(geometry: geo, options: nil)
-        collideSphere.physicsBody = SCNPhysicsBody(type: .Kinematic, shape: shape2)
+        collideSphere.physicsBody = SCNPhysicsBody(type: .kinematic, shape: shape2)
         
         // We only want to collide with bananas, coins, and coconuts. Ground collision is handled elsewhere.
         collideSphere.physicsBody!.collisionBitMask =
@@ -163,18 +163,18 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
     
     private func setupIdleAnimation() {
         if let idleAnimation = self.loadAndCacheAnimation("art.scnassets/characters/explorer/idle",
-            forKey: AAPLPlayerCharacter.keyForAnimationType(.Idle))
+            forKey: AAPLPlayerCharacter.keyForAnimationType(.idle))
         {
-            idleAnimation.repeatCount = FLT_MAX
+            idleAnimation.repeatCount = .greatestFiniteMagnitude
             idleAnimation.fadeInDuration = 0.15
             idleAnimation.fadeOutDuration = 0.15
         }
     }
     
     func setupRunAnimation() {
-        let runKey = AAPLPlayerCharacter.keyForAnimationType(.Run)
-        let runStartKey = AAPLPlayerCharacter.keyForAnimationType(.RunStart)
-        let runStopKey = AAPLPlayerCharacter.keyForAnimationType(.RunStop)
+        let runKey = AAPLPlayerCharacter.keyForAnimationType(.run)
+        let runStartKey = AAPLPlayerCharacter.keyForAnimationType(.runStart)
+        let runStopKey = AAPLPlayerCharacter.keyForAnimationType(.runStop)
         
         let runAnim = self.loadAndCacheAnimation("art.scnassets/characters/explorer/run",
             forKey: runKey)!
@@ -182,7 +182,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
             forKey: runStartKey)!
         let runStopAnim = self.loadAndCacheAnimation("art.scnassets/characters/explorer/run_stop",
             forKey: runStopKey)!
-        runAnim.repeatCount = FLT_MAX
+        runAnim.repeatCount = .greatestFiniteMagnitude
         runStartAnim.repeatCount = 0
         runStopAnim.repeatCount = 0
         
@@ -205,7 +205,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
             if self.inRunAnimation {
                 self._isWalking = true
             } else {
-                self.mainSkeleton?.removeAnimationForKey(runKey, fadeOutDuration: 0.15)
+                self.mainSkeleton?.removeAnimation(forKey: runKey, fadeOutDuration: 0.15)
             }
         }
         let stopWalkStateBlock: SCNAnimationEventBlock = {animation, animatedObject, playingBackward in
@@ -215,7 +215,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
                 self._inRunAnimation = false
                 self.inRunAnimation = true
                 self.ChangingDirection = false
-                self.walkDirection = (self.walkDirection == .Left) ? .Right : .Left
+                self.walkDirection = (self.walkDirection == .left) ? .right : .left
             }
         }
         
@@ -226,10 +226,10 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
     }
     
     private func setupJumpAnimation() {
-        let jumpKey = AAPLPlayerCharacter.keyForAnimationType(.Jump)
-        let fallingKey = AAPLPlayerCharacter.keyForAnimationType(.JumpFalling)
-        let landKey = AAPLPlayerCharacter.keyForAnimationType(.JumpLand)
-        let idleKey = AAPLPlayerCharacter.keyForAnimationType(.Idle)
+        let jumpKey = AAPLPlayerCharacter.keyForAnimationType(.jump)
+        let fallingKey = AAPLPlayerCharacter.keyForAnimationType(.jumpFalling)
+        let landKey = AAPLPlayerCharacter.keyForAnimationType(.jumpLand)
+        let idleKey = AAPLPlayerCharacter.keyForAnimationType(.idle)
         
         let jumpAnimation = self.loadAndCacheAnimation("art.scnassets/characters/explorer/jump_start", forKey: jumpKey)!
         let fallAnimation = self.loadAndCacheAnimation("art.scnassets/characters/explorer/jump_falling", forKey: fallingKey)!
@@ -254,7 +254,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
             self.inJumpAnimation = false
         }
         let pause: SCNAnimationEventBlock = {animation, animatedObject, playingBackward in
-            self.mainSkeleton?.pauseAnimationForKey(fallingKey)
+            self.mainSkeleton?.pauseAnimation(forKey: fallingKey)
         }
         
         jumpAnimation.animationEvents = [SCNAnimationEvent(keyTime: 0.25, block: leaveGroundBlock)]
@@ -267,16 +267,16 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
     
     private func setupBoredAnimation() {
         if let animation = self.loadAndCacheAnimation("art.scnassets/characters/explorer/bored",
-            forKey: AAPLPlayerCharacter.keyForAnimationType(.Bored))
+            forKey: AAPLPlayerCharacter.keyForAnimationType(.bored))
         {
-            animation.repeatCount = FLT_MAX
+            animation.repeatCount = .greatestFiniteMagnitude
         }
     }
     
     private func setupHitAnimation() {
-        if let animation = self.loadAndCacheAnimation("art.scnassets/characters/explorer/hit", forKey: AAPLPlayerCharacter.keyForAnimationType(.GetHit))
+        if let animation = self.loadAndCacheAnimation("art.scnassets/characters/explorer/hit", forKey: AAPLPlayerCharacter.keyForAnimationType(.getHit))
         {
-            animation.repeatCount = FLT_MAX
+            animation.repeatCount = .greatestFiniteMagnitude
         }
     }
     
@@ -286,22 +286,22 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
         return _isWalking
     }
     
-    private func playIdle(stop: Bool) {
+    private func playIdle(_ stop: Bool) {
         self.turnOffWalkingDust()
         
-        let anim = self.cachedAnimationForKey(AAPLPlayerCharacter.keyForAnimationType(.Idle))!
+        let anim = self.cachedAnimationForKey(AAPLPlayerCharacter.keyForAnimationType(.idle))!
         anim.repeatCount = MAXFLOAT
         anim.fadeInDuration = 0.1
         anim.fadeOutDuration = 0.1
-        self.mainSkeleton?.addAnimation(anim, forKey: AAPLPlayerCharacter.keyForAnimationType(.Idle))
+        self.mainSkeleton?.addAnimation(anim, forKey: AAPLPlayerCharacter.keyForAnimationType(.idle))
     }
     
     private func playLand() {
-        let fallKey = AAPLPlayerCharacter.keyForAnimationType(.JumpFalling)
-        let key = AAPLPlayerCharacter.keyForAnimationType(.JumpLand)
+        let fallKey = AAPLPlayerCharacter.keyForAnimationType(.jumpFalling)
+        let key = AAPLPlayerCharacter.keyForAnimationType(.jumpLand)
         let anim = self.cachedAnimationForKey(key)!
         anim.timeOffset = 0.65
-        self.mainSkeleton?.removeAnimationForKey(fallKey, fadeOutDuration: 0.15)
+        self.mainSkeleton?.removeAnimation(forKey: fallKey, fadeOutDuration: 0.15)
         self.inJumpAnimation = false
         if _isWalking {
             _inRunAnimation = false
@@ -313,7 +313,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
         AAPLGameSimulation.sim.playSound("Land.wav")
     }
     
-    override func update(deltaTime: NSTimeInterval) {
+    override func update(_ deltaTime: TimeInterval) {
         var mtx = SCNMatrix4ToGLKMatrix4(self.transform)
         
         let gravity = GLKVector3Make(0, -90, 0)
@@ -349,10 +349,10 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
         self.transform = SCNMatrix4FromGLKMatrix4(mtx)
         
         //-- move the camera
-        if let camera = AAPLGameSimulation.sim.gameLevel.camera?.parentNode {
+        if let camera = AAPLGameSimulation.sim.gameLevel.camera?.parent {
             
             //interpolate
-            let pos = SCNVector3Make(self.position.x + ((self.walkDirection == .Right) ? 250 : -250),
+            let pos = SCNVector3Make(self.position.x + ((self.walkDirection == .right) ? 250 : -250),
                 (self.position.y + 261) - (0.85 * (self.position.y - SCNVectorFloat(groundPlaneHeight))),
                 (self.position.z + 1500))
             let desiredTransform = AAPLMatrix4SetPosition(camera.transform, pos)
@@ -363,14 +363,14 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
     /*! Given our current location,
     shoot a ray downward to collide with our ground mesh or lava mesh
     */
-    private func getGroundHeight(mtx: GLKMatrix4) -> CGFloat {
+    private func getGroundHeight(_ mtx: GLKMatrix4) -> CGFloat {
         let start = SCNVector3Make(SCNVectorFloat(mtx.m30), SCNVectorFloat(mtx.m31) + 1000, SCNVectorFloat(mtx.m32))
         let end = SCNVector3Make(SCNVectorFloat(mtx.m30), SCNVectorFloat(mtx.m31) - 3000, SCNVectorFloat(mtx.m32))
         
-        let hits = AAPLGameSimulation.sim.physicsWorld.rayTestWithSegmentFromPoint(start,
-            toPoint: end,
-            options: [SCNPhysicsTestCollisionBitMaskKey: GameCollisionCategoryGround | GameCollisionCategoryLava,
-                SCNPhysicsTestSearchModeKey: SCNPhysicsTestSearchModeClosest])
+        let hits = AAPLGameSimulation.sim.physicsWorld.rayTestWithSegment(from: start,
+            to: end,
+            options: [SCNPhysicsWorld.TestOption.collisionBitMask: GameCollisionCategoryGround | GameCollisionCategoryLava,
+                SCNPhysicsWorld.TestOption.searchMode: SCNPhysicsWorld.TestSearchMode.closest])
         if !hits.isEmpty {
             // take the first hit. make that the ground.
             for result in hits {
@@ -386,7 +386,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
         
     }
     
-    private func AAPLMatrix4Interpolate(scnm0: SCNMatrix4, _ scnmf: SCNMatrix4, _ factor: CGFloat) -> SCNMatrix4 {
+    private func AAPLMatrix4Interpolate(_ scnm0: SCNMatrix4, _ scnmf: SCNMatrix4, _ factor: CGFloat) -> SCNMatrix4 {
         let m0 = SCNMatrix4ToGLKMatrix4(scnm0)
         let mf = SCNMatrix4ToGLKMatrix4(scnmf)
         let p0 = GLKMatrix4GetColumn(m0, 3)
@@ -408,7 +408,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
     
     /*! Jump with variable heights based on how many times this method gets called.
     */
-    func performJumpAndStop(stop: Bool) {
+    func performJumpAndStop(_ stop: Bool) {
         jumpForce = 13.0
         if stop {
             return
@@ -443,9 +443,9 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
                 // Launching YES means we are in the preflight jump animation.
                 self.launching = true
                 
-                let anim = self.cachedAnimationForKey(AAPLPlayerCharacter.keyForAnimationType(.Jump))!
+                let anim = self.cachedAnimationForKey(AAPLPlayerCharacter.keyForAnimationType(.jump))!
                 self.mainSkeleton?.removeAllAnimations()
-                self.mainSkeleton?.addAnimation(anim, forKey: AAPLPlayerCharacter.keyForAnimationType(.Jump))
+                self.mainSkeleton?.addAnimation(anim, forKey: AAPLPlayerCharacter.keyForAnimationType(.jump))
                 self.turnOffWalkingDust()
             } else {
                 self.launching = false
@@ -467,11 +467,11 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
             if _inRunAnimation {
                 self.walkSpeed = baseWalkSpeed * 2
                 
-                let runKey = AAPLPlayerCharacter.keyForAnimationType(.Run)
-                let idleKey = AAPLPlayerCharacter.keyForAnimationType(.Idle)
+                let runKey = AAPLPlayerCharacter.keyForAnimationType(.run)
+                let idleKey = AAPLPlayerCharacter.keyForAnimationType(.idle)
                 
                 let runAnim = self.cachedAnimationForKey(runKey)!
-                self.mainSkeleton?.removeAnimationForKey(idleKey, fadeOutDuration: 0.15)
+                self.mainSkeleton?.removeAnimation(forKey: idleKey, fadeOutDuration: 0.15)
                 self.mainSkeleton?.addAnimation(runAnim, forKey: runKey)
                 // add or turn on the flow of dust particles.
                 if !(self.particleSystems?.contains(self.dustWalking) ?? false) {
@@ -481,12 +481,12 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
                 }
             } else {
                 // Fade out run and move to run stop.
-                let runKey = AAPLPlayerCharacter.keyForAnimationType(.Run)
-                let runStopKey = AAPLPlayerCharacter.keyForAnimationType(.Idle)
+                let runKey = AAPLPlayerCharacter.keyForAnimationType(.run)
+                let runStopKey = AAPLPlayerCharacter.keyForAnimationType(.idle)
                 let runStopAnim = self.cachedAnimationForKey(runStopKey)!
                 runStopAnim.fadeInDuration = 0.15
                 runStopAnim.fadeOutDuration = 0.15
-                self.mainSkeleton?.removeAnimationForKey(runKey, fadeOutDuration: 0.15)
+                self.mainSkeleton?.removeAnimation(forKey: runKey, fadeOutDuration: 0.15)
                 self.mainSkeleton?.addAnimation(runStopAnim, forKey: runStopKey)
                 self.walkSpeed = baseWalkSpeed
                 self.turnOffWalkingDust()
@@ -512,7 +512,7 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
             if newDirection != _walkDirection && _isWalking && !self.launching && !self.jumping {
                 if !self.ChangingDirection {
                     self.mainSkeleton?.removeAllAnimations()
-                    let key = AAPLPlayerCharacter.keyForAnimationType(.RunStop)
+                    let key = AAPLPlayerCharacter.keyForAnimationType(.runStop)
                     let anim = self.cachedAnimationForKey(key)!
                     self.mainSkeleton?.addAnimation(anim, forKey: key)
                     self.ChangingDirection = true
@@ -532,11 +532,11 @@ class AAPLPlayerCharacter: AAPLSkinnedCharacter {
             _inHitAnimation = GetHitAnimState
             
             // Play the get hit animation.
-            let anim = self.cachedAnimationForKey(AAPLPlayerCharacter.keyForAnimationType(.GetHit))!
+            let anim = self.cachedAnimationForKey(AAPLPlayerCharacter.keyForAnimationType(.getHit))!
             anim.repeatCount = 0
             anim.fadeInDuration = 0.15
             anim.fadeOutDuration = 0.15
-            self.mainSkeleton?.addAnimation(anim, forKey: AAPLPlayerCharacter.keyForAnimationType(.GetHit))
+            self.mainSkeleton?.addAnimation(anim, forKey: AAPLPlayerCharacter.keyForAnimationType(.getHit))
             
             _inHitAnimation = false
             

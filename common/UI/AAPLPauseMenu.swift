@@ -26,10 +26,10 @@ class AAPLPauseMenu: SKNode {
         self.myLabel = AAPLInGameScene.labelWithText("Resume", andSize: 65)
         super.init()
         
-        self.myLabel.position = CGPointMake(CGRectGetMidX(self.frame),
-            CGRectGetMidY(self.frame))
+        self.myLabel.position = CGPoint(x: self.frame.midX,
+            y: self.frame.midY)
         
-        self.position = CGPointMake(frameSize.width * 0.5, frameSize.height * 0.5)
+        self.position = CGPoint(x: frameSize.width * 0.5, y: frameSize.height * 0.5)
         
         self.addChild(self.myLabel)
         
@@ -41,12 +41,12 @@ class AAPLPauseMenu: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func touchUpAtPoint(location: CGPoint) {
-        let touchedNode = self.scene?.nodeAtPoint(location)
+    func touchUpAtPoint(_ location: CGPoint) {
+        let touchedNode = self.scene?.atPoint(location)
         
         if touchedNode === self.myLabel {
-            self.hidden = true
-            AAPLGameSimulation.sim.gameState = .InGame
+            self.isHidden = true
+            AAPLGameSimulation.sim.gameState = .inGame
         }
     }
     
