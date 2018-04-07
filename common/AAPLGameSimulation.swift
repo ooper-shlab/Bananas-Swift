@@ -113,8 +113,10 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         SCNTransaction.commit()
         
-        let appDelegate = AAPLAppDelegate.sharedAppDelegate()
-        appDelegate.scnView.technique = self.desaturationTechnique
+        DispatchQueue.main.async {
+            let appDelegate = AAPLAppDelegate.sharedAppDelegate()
+            appDelegate.scnView.technique = self.desaturationTechnique
+        }
     }
     
     private func setPauseFilters() {
@@ -127,8 +129,10 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         SCNTransaction.commit()
         
-        let appDelegate = AAPLAppDelegate.sharedAppDelegate()
-        appDelegate.scnView.technique = self.desaturationTechnique
+        DispatchQueue.main.async {
+            let appDelegate = AAPLAppDelegate.sharedAppDelegate()
+            appDelegate.scnView.technique = self.desaturationTechnique
+        }
     }
     
     private func setPregameFilters() {
@@ -142,8 +146,10 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         SCNTransaction.commit()
         
-        let appDelegate = AAPLAppDelegate.sharedAppDelegate()
-        appDelegate.scnView.technique = self.desaturationTechnique
+        DispatchQueue.main.async {
+            let appDelegate = AAPLAppDelegate.sharedAppDelegate()
+            appDelegate.scnView.technique = self.desaturationTechnique
+        }
     }
     
     private func setIngameFilters() {
@@ -157,9 +163,11 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         
         let dropTechnique = SCNAction.wait(duration: 1.0)
         
-        let appDelegate = AAPLAppDelegate.sharedAppDelegate()
-        appDelegate.scnView.scene!.rootNode.runAction(dropTechnique) {
-            appDelegate.scnView.technique = nil
+        DispatchQueue.main.async {
+            let appDelegate = AAPLAppDelegate.sharedAppDelegate()
+            appDelegate.scnView.scene!.rootNode.runAction(dropTechnique) {
+                appDelegate.scnView.technique = nil
+            }
         }
     }
     
@@ -425,10 +433,16 @@ class AAPLGameSimulation: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactD
         path = Bundle.main.path(forResource: path, ofType: nil)!
         let newSystem = NSKeyedUnarchiver.unarchiveObject(withFile: path) as! SCNParticleSystem
         
-        let lastPathComponent: String
-        if newSystem.particleImage != nil {
-            lastPathComponent = (newSystem.particleImage as! URL).lastPathComponent
-            path = "level/effects/\(lastPathComponent)"
+        let lastPathComponent: String?
+        if let particleImageURL = newSystem.particleImage as? URL {
+            lastPathComponent = particleImageURL.lastPathComponent
+        } else if let particleImagePath = newSystem.particleImage as? String {
+            lastPathComponent = URL(string: particleImagePath)!.lastPathComponent
+        } else {
+            lastPathComponent = nil
+        }
+        if let component = lastPathComponent {
+            path = "level/effects/\(component)"
             path = self.pathForArtResource(path)
             let url = Bundle.main.url(forResource: path, withExtension: nil)
             newSystem.particleImage = url

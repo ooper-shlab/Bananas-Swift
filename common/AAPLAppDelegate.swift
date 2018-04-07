@@ -36,12 +36,12 @@ class AAPLAppDelegate: NSObject {
     private func listenForGameControllerWithSim(_ gameSim: AAPLGameSimulation) {
 	//-- GameController hook up
         NotificationCenter.default.addObserver(gameSim,
-            selector: #selector(AAPLGameSimulation.controllerDidConnect),
+            selector: #selector(gameSim.controllerDidConnect),
             name: .GCControllerDidConnect,
             object: nil)
 
         NotificationCenter.default.addObserver(gameSim,
-            selector: #selector(AAPLGameSimulation.controllerDidDisconnect),
+            selector: #selector(gameSim.controllerDidDisconnect),
             name: .GCControllerDidDisconnect,
             object: nil)
 
@@ -68,10 +68,13 @@ class AAPLAppDelegate: NSObject {
 
         let progress = Progress(totalUnitCount: 10)
 
+        let scnSize = self.scnView.bounds.size
+        //### Instantiate `sim` in the main thread
+        _ = AAPLGameSimulation.sim
         DispatchQueue.global(qos: .default).async {
             progress.becomeCurrent(withPendingUnitCount: 2)
 
-            let ui = AAPLInGameScene(size: self.scnView.bounds.size)
+            let ui = AAPLInGameScene(size: scnSize)
             DispatchQueue.main.async {
                 self.scnView.overlaySKScene = ui
             }

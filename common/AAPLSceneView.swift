@@ -48,7 +48,7 @@ class AAPLSceneView: SCNView {
         self.setupGestureRecognizer()
     }
     private func setupGestureRecognizer() {
-        let gesture = AAPLVirtualDPadGestureRecognizer(target: self, action: #selector(AAPLSceneView.handleVirtualDPadAction(_:)))
+        let gesture = AAPLVirtualDPadGestureRecognizer(target: self, action: #selector(self.handleVirtualDPadAction(_:)))
         gesture.delegate = self
         self.addGestureRecognizer(gesture)
     }
@@ -119,7 +119,7 @@ class AAPLSceneView: SCNView {
             break
         }
         
-        if theEvent.modifierFlags.contains(.shift) {
+        if theEvent.modifierFlags.contains(NSEvent.ModifierFlags.shift) {
             self.updateKey(AAPLRunKey, isPressed: false)
         }
     }

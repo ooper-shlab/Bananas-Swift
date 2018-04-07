@@ -16,10 +16,10 @@ You should not contact to Apple or SHLab(jp) about any faults caused by my trans
 
 ### Build
 
-Xcode 8.3.3, iOS SDK 10
+Xcode 9.3, iOS SDK 11/macOS SDK 10.13
 
 ### Runtime
 
-iOS 8 or later
+iOS 8 or later, macOS 10.10, 10.12 or later
 
 (This sample code may not run on OS X 10.11.)

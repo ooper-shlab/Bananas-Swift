@@ -60,6 +60,10 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
     private var palmTreeProtoObject: SCNNode?
     private var monkeys: [AAPLSkinnedCharacter] = []
     
+    //### For main thread checking...
+    private weak var appDelegate = AAPLAppDelegate.sharedAppDelegate()
+    private let viewFrame = AAPLAppDelegate.sharedAppDelegate().scnView.frame
+    
     var highEnd: Bool {
         //todo: return YES on OSX, iPad air, iphone 5s - NO otherwie
         return true
@@ -433,7 +437,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         #if os(OSX)
             let options = [SCNSceneSource.LoadingOption.convertToYUp: true]
         #else
-            let options: [SCNSceneSource.LoadingOption: AnyObject] = [:]
+            let options: [SCNSceneSource.LoadingOption: Any] = [:]
         #endif
         let scene = SCNScene(named: "level.dae", inDirectory: AAPLGameSimulation.pathForArtResource("level/"), options: options)
         for node in scene?.rootNode.childNodes ?? [] {
@@ -629,7 +633,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         self.rootNode?.enumerateChildNodes {child, stop in
             let range = child.parent?.name?.range(of: "vine")
-            if child.geometry?.getGeometrySources(for: .color) == nil {
+            if child.geometry?.sources(for: .color) == nil {
                 //###
             } else if range != nil {
                 dynamicNodesWithVertColorAnimation.append(child)
@@ -797,7 +801,7 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         //         collected bananas from the player (world space) to score (screen space)
         //
         
-        let appDelegate = AAPLAppDelegate.sharedAppDelegate()
+        //###let appDelegate = AAPLAppDelegate.sharedAppDelegate()
         let currentState = AAPLGameSimulation.sim.gameState
         
         // Move character along path if walking.
@@ -830,15 +834,16 @@ class AAPLGameLevel: NSObject, AAPLGameUIState {
         
         // update the player's SP position.
         let playerPosition = AAPLMatrix4GetPosition(self.playerCharacter?.worldTransform ?? SCNMatrix4())
-        _screenSpaceplayerPosition = appDelegate.scnView.projectPoint(playerPosition)
+        _screenSpaceplayerPosition = appDelegate!.scnView.projectPoint(playerPosition)
         
         // Update the SP position of the score label
         var pt = self.scoreLabelLocation
         #if os(iOS)
             // Unflip coordinate system on iOS.
-            pt.y = appDelegate.scnView.frame.size.height - pt.y
+        //###pt.y = appDelegate.scnView.frame.size.height - pt.y
+            pt.y = viewFrame.size.height - pt.y
         #endif
-        _worldSpaceLabelScorePosition = appDelegate.scnView.unprojectPoint(SCNVector3Make(SCNVectorFloat(pt.x), SCNVectorFloat(pt.y), _screenSpaceplayerPosition.z))
+        _worldSpaceLabelScorePosition = appDelegate!.scnView.unprojectPoint(SCNVector3Make(SCNVectorFloat(pt.x), SCNVectorFloat(pt.y), _screenSpaceplayerPosition.z))
     }
     
     func collectBanana(_ banana: SCNNode) {

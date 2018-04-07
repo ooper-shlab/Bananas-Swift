@@ -33,7 +33,7 @@ class AAPLAppDelegateOSX: AAPLAppDelegate, NSApplicationDelegate {
         return true
     }
 
-    @IBAction func pause(_: AnyObject) {
+    @IBAction func pause(_: Any) {
         self.togglePaused()
     }
 
